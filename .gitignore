@@ -1,0 +1,9 @@
+.tools/
+.data/
+.env
+.env.*
+!.env.example
+*.exe
+*.test
+coverage.out
+bin/

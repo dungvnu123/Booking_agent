@@ -1,0 +1,20 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Backend: setup",
+      "type": "process",
+      "command": "powershell",
+      "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "${workspaceFolder}/scripts/setup.ps1"],
+      "problemMatcher": []
+    },
+    {
+      "label": "Backend: check",
+      "type": "process",
+      "command": "powershell",
+      "args": ["-NoProfile", "-ExecutionPolicy", "Bypass", "-File", "${workspaceFolder}/scripts/check.ps1"],
+      "group": { "kind": "test", "isDefault": true },
+      "problemMatcher": ["$go"]
+    }
+  ]
+}

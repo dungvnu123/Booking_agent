@@ -1,0 +1,19 @@
+{
+  "go.goroot": "C:/Program Files/Go",
+  "go.gopath": "${workspaceFolder}/.tools/gopath",
+  "go.toolsEnvVars": {
+    "GOFLAGS": "-buildvcs=false",
+    "GOCACHE": "${workspaceFolder}/.tools/cache",
+    "GOTOOLCHAIN": "local"
+  },
+  "terminal.integrated.env.windows": {
+    "GOFLAGS": "-buildvcs=false",
+    "PATH": "C:\\Program Files\\Go\\bin;${env:PATH}",
+    "GOROOT": "C:\\Program Files\\Go",
+    "GOPATH": "${workspaceFolder}\\.tools\\gopath",
+    "GOCACHE": "${workspaceFolder}\\.tools\\cache",
+    "GOTOOLCHAIN": "local"
+  },
+  "files.exclude": { "**/.tools": true },
+  "files.eol": "\n"
+}

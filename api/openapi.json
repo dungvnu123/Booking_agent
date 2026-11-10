@@ -1,0 +1,3249 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "ABClinic Go — scaffold",
+    "version": "0.1.0",
+    "description": "Project skeleton only. All business operations return HTTP 501. No authentication, clinical logic or persistence use cases are implemented. Source inventory is static; request/response DTOs and Java business error codes require verification before implementation. AI routes are excluded."
+  },
+  "servers": [
+    {
+      "url": "/"
+    }
+  ],
+  "tags": [
+    {
+      "name": "auth",
+      "description": "Scaffold — not implemented"
+    },
+    {
+      "name": "user",
+      "description": "Scaffold — not implemented"
+    },
+    {
+      "name": "doctor",
+      "description": "Scaffold — not implemented"
+    },
+    {
+      "name": "patient",
+      "description": "Scaffold — not implemented"
+    },
+    {
+      "name": "medicine",
+      "description": "Scaffold — not implemented"
+    },
+    {
+      "name": "examination",
+      "description": "Scaffold — not implemented"
+    },
+    {
+      "name": "roster",
+      "description": "Scaffold — not implemented"
+    },
+    {
+      "name": "leave",
+      "description": "Scaffold — not implemented"
+    },
+    {
+      "name": "closure",
+      "description": "Scaffold — not implemented"
+    },
+    {
+      "name": "booking",
+      "description": "Scaffold — not implemented"
+    },
+    {
+      "name": "notification",
+      "description": "Scaffold — not implemented"
+    },
+    {
+      "name": "attachment",
+      "description": "Scaffold — not implemented"
+    }
+  ],
+  "paths": {
+    "/api/auth/register": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Register",
+        "operationId": "auth.Register",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/register-patient": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "RegisterPatient",
+        "operationId": "auth.RegisterPatient",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/login": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Login",
+        "operationId": "auth.Login",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/refresh_token": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "RefreshToken",
+        "operationId": "auth.RefreshToken",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/logout": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Logout",
+        "operationId": "auth.Logout",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/users/roles": {
+      "get": {
+        "tags": [
+          "user"
+        ],
+        "summary": "GetRoles",
+        "operationId": "user.GetRoles",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/users": {
+      "get": {
+        "tags": [
+          "user"
+        ],
+        "summary": "GetUsers",
+        "operationId": "user.GetUsers",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "user"
+        ],
+        "summary": "CreateUser",
+        "operationId": "user.CreateUser",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/users/search": {
+      "get": {
+        "tags": [
+          "user"
+        ],
+        "summary": "SearchUsers",
+        "operationId": "user.SearchUsers",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/users/{id}": {
+      "get": {
+        "tags": [
+          "user"
+        ],
+        "summary": "GetUser",
+        "operationId": "user.GetUser",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Placeholder; verify the original route-specific ID type before implementing."
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "user"
+        ],
+        "summary": "UpdateUser",
+        "operationId": "user.UpdateUser",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Placeholder; verify the original route-specific ID type before implementing."
+          }
+        ]
+      }
+    },
+    "/api/admin/users/{id}/status": {
+      "patch": {
+        "tags": [
+          "user"
+        ],
+        "summary": "ChangeStatus",
+        "operationId": "user.ChangeStatus",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Placeholder; verify the original route-specific ID type before implementing."
+          }
+        ]
+      }
+    },
+    "/api/admin/users/{id}/password": {
+      "patch": {
+        "tags": [
+          "user"
+        ],
+        "summary": "ResetPassword",
+        "operationId": "user.ResetPassword",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Placeholder; verify the original route-specific ID type before implementing."
+          }
+        ]
+      }
+    },
+    "/api/admin/doctor-profiles": {
+      "get": {
+        "tags": [
+          "doctor"
+        ],
+        "summary": "ListDoctorProfiles",
+        "operationId": "doctor.ListDoctorProfiles",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "doctor"
+        ],
+        "summary": "AssignProfile",
+        "operationId": "doctor.AssignProfile",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/patients": {
+      "post": {
+        "tags": [
+          "patient"
+        ],
+        "summary": "CreatePatient",
+        "operationId": "patient.CreatePatient",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "patient"
+        ],
+        "summary": "GetAllPatients",
+        "operationId": "patient.GetAllPatients",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/patients/search": {
+      "get": {
+        "tags": [
+          "patient"
+        ],
+        "summary": "SearchPatients",
+        "operationId": "patient.SearchPatients",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/patients/stats": {
+      "get": {
+        "tags": [
+          "patient"
+        ],
+        "summary": "GetPatientStats",
+        "operationId": "patient.GetPatientStats",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/patients/{id}": {
+      "get": {
+        "tags": [
+          "patient"
+        ],
+        "summary": "GetPatientById",
+        "operationId": "patient.GetPatientById",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Placeholder; verify the original route-specific ID type before implementing."
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "patient"
+        ],
+        "summary": "UpdatePatient",
+        "operationId": "patient.UpdatePatient",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Placeholder; verify the original route-specific ID type before implementing."
+          }
+        ]
+      }
+    },
+    "/api/patients/import": {
+      "post": {
+        "tags": [
+          "patient"
+        ],
+        "summary": "ImportPatients",
+        "operationId": "patient.ImportPatients",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/patients/import/batch": {
+      "post": {
+        "tags": [
+          "patient"
+        ],
+        "summary": "ImportPatientsBatch",
+        "operationId": "patient.ImportPatientsBatch",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/medicines": {
+      "get": {
+        "tags": [
+          "medicine"
+        ],
+        "summary": "GetMedicines",
+        "operationId": "medicine.GetMedicines",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "medicine"
+        ],
+        "summary": "CreateMedicine",
+        "operationId": "medicine.CreateMedicine",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/medicines/metadata": {
+      "get": {
+        "tags": [
+          "medicine"
+        ],
+        "summary": "GetMetadata",
+        "operationId": "medicine.GetMetadata",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/medicines/{id}": {
+      "get": {
+        "tags": [
+          "medicine"
+        ],
+        "summary": "GetMedicineById",
+        "operationId": "medicine.GetMedicineById",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Placeholder; verify the original route-specific ID type before implementing."
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "medicine"
+        ],
+        "summary": "UpdateMedicine",
+        "operationId": "medicine.UpdateMedicine",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Placeholder; verify the original route-specific ID type before implementing."
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "medicine"
+        ],
+        "summary": "DeleteMedicine",
+        "operationId": "medicine.DeleteMedicine",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Placeholder; verify the original route-specific ID type before implementing."
+          }
+        ]
+      }
+    },
+    "/api/medicines/bulk": {
+      "post": {
+        "tags": [
+          "medicine"
+        ],
+        "summary": "BulkImport",
+        "operationId": "medicine.BulkImport",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/examinations/{patientId}": {
+      "post": {
+        "tags": [
+          "examination"
+        ],
+        "summary": "Create",
+        "operationId": "examination.Create",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "patientId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Placeholder; verify the original route-specific ID type before implementing."
+          }
+        ]
+      }
+    },
+    "/api/examinations/patient/{patientId}": {
+      "get": {
+        "tags": [
+          "examination"
+        ],
+        "summary": "GetByPatient",
+        "operationId": "examination.GetByPatient",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "patientId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Placeholder; verify the original route-specific ID type before implementing."
+          }
+        ]
+      }
+    },
+    "/api/examinations/{id}": {
+      "get": {
+        "tags": [
+          "examination"
+        ],
+        "summary": "GetById",
+        "operationId": "examination.GetById",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Placeholder; verify the original route-specific ID type before implementing."
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "examination"
+        ],
+        "summary": "Update",
+        "operationId": "examination.Update",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Placeholder; verify the original route-specific ID type before implementing."
+          }
+        ]
+      }
+    },
+    "/api/files/upload": {
+      "post": {
+        "tags": [
+          "attachment"
+        ],
+        "summary": "UploadFile",
+        "operationId": "attachment.UploadFile",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/files/list": {
+      "get": {
+        "tags": [
+          "attachment"
+        ],
+        "summary": "ListFiles",
+        "operationId": "attachment.ListFiles",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/roster/monthly/{id}/picks/me": {
+      "get": {
+        "tags": [
+          "roster"
+        ],
+        "summary": "GetMyPick",
+        "operationId": "roster.GetMyPick",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Placeholder; verify the original route-specific ID type before implementing."
+          }
+        ]
+      },
+      "put": {
+        "tags": [
+          "roster"
+        ],
+        "summary": "SubmitPick",
+        "operationId": "roster.SubmitPick",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Placeholder; verify the original route-specific ID type before implementing."
+          }
+        ]
+      }
+    },
+    "/api/roster/monthly": {
+      "post": {
+        "tags": [
+          "roster"
+        ],
+        "summary": "OpenMonth",
+        "operationId": "roster.OpenMonth",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "roster"
+        ],
+        "summary": "ListMonths",
+        "operationId": "roster.ListMonths",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/roster/monthly/current": {
+      "get": {
+        "tags": [
+          "roster"
+        ],
+        "summary": "GetCurrentOpenMonth",
+        "operationId": "roster.GetCurrentOpenMonth",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/roster/monthly/my-preview": {
+      "get": {
+        "tags": [
+          "roster"
+        ],
+        "summary": "GetMyPreview",
+        "operationId": "roster.GetMyPreview",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/roster/monthly/{id}": {
+      "get": {
+        "tags": [
+          "roster"
+        ],
+        "summary": "GetMonth",
+        "operationId": "roster.GetMonth",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Placeholder; verify the original route-specific ID type before implementing."
+          }
+        ]
+      }
+    },
+    "/api/roster/monthly/capacity-config": {
+      "get": {
+        "tags": [
+          "roster"
+        ],
+        "summary": "GetAvgCapacity",
+        "operationId": "roster.GetAvgCapacity",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/roster/monthly/solver-config": {
+      "put": {
+        "tags": [
+          "roster"
+        ],
+        "summary": "UpdateSolverConfig",
+        "operationId": "roster.UpdateSolverConfig",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/roster/monthly/{id}/override-config": {
+      "put": {
+        "tags": [
+          "roster"
+        ],
+        "summary": "OverrideConfig",
+        "operationId": "roster.OverrideConfig",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Placeholder; verify the original route-specific ID type before implementing."
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "roster"
+        ],
+        "summary": "ClearOverrideConfig",
+        "operationId": "roster.ClearOverrideConfig",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Placeholder; verify the original route-specific ID type before implementing."
+          }
+        ]
+      }
+    },
+    "/api/roster/monthly/{id}/solve": {
+      "post": {
+        "tags": [
+          "roster"
+        ],
+        "summary": "RunSolver",
+        "operationId": "roster.RunSolver",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Placeholder; verify the original route-specific ID type before implementing."
+          }
+        ]
+      }
+    },
+    "/api/roster/monthly/{id}/result": {
+      "get": {
+        "tags": [
+          "roster"
+        ],
+        "summary": "GetResult",
+        "operationId": "roster.GetResult",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Placeholder; verify the original route-specific ID type before implementing."
+          }
+        ]
+      }
+    },
+    "/api/roster/monthly/{id}/publish-preview": {
+      "get": {
+        "tags": [
+          "roster"
+        ],
+        "summary": "GetPublishPreview",
+        "operationId": "roster.GetPublishPreview",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Placeholder; verify the original route-specific ID type before implementing."
+          }
+        ]
+      }
+    },
+    "/api/roster/monthly/{id}/approve": {
+      "post": {
+        "tags": [
+          "roster"
+        ],
+        "summary": "Approve",
+        "operationId": "roster.Approve",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Placeholder; verify the original route-specific ID type before implementing."
+          }
+        ]
+      }
+    },
+    "/api/roster/monthly/{id}/revert-to-draft": {
+      "post": {
+        "tags": [
+          "roster"
+        ],
+        "summary": "RevertToDraft",
+        "operationId": "roster.RevertToDraft",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Placeholder; verify the original route-specific ID type before implementing."
+          }
+        ]
+      }
+    },
+    "/api/roster/monthly/{id}/publish": {
+      "post": {
+        "tags": [
+          "roster"
+        ],
+        "summary": "Publish",
+        "operationId": "roster.Publish",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Placeholder; verify the original route-specific ID type before implementing."
+          }
+        ]
+      }
+    },
+    "/api/roster/monthly/{id}/publish-now": {
+      "post": {
+        "tags": [
+          "roster"
+        ],
+        "summary": "PublishNow",
+        "operationId": "roster.PublishNow",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Placeholder; verify the original route-specific ID type before implementing."
+          }
+        ]
+      }
+    },
+    "/api/roster/monthly/{id}/assignments": {
+      "post": {
+        "tags": [
+          "roster"
+        ],
+        "summary": "AddAssignment",
+        "operationId": "roster.AddAssignment",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Placeholder; verify the original route-specific ID type before implementing."
+          }
+        ]
+      },
+      "delete": {
+        "tags": [
+          "roster"
+        ],
+        "summary": "RemoveAssignment",
+        "operationId": "roster.RemoveAssignment",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Placeholder; verify the original route-specific ID type before implementing."
+          }
+        ]
+      }
+    },
+    "/api/roster/monthly/{id}/assignments/lock": {
+      "post": {
+        "tags": [
+          "roster"
+        ],
+        "summary": "LockAssignment",
+        "operationId": "roster.LockAssignment",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Placeholder; verify the original route-specific ID type before implementing."
+          }
+        ]
+      }
+    },
+    "/api/roster/monthly/{id}/lock": {
+      "post": {
+        "tags": [
+          "roster"
+        ],
+        "summary": "LockCell",
+        "operationId": "roster.LockCell",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Placeholder; verify the original route-specific ID type before implementing."
+          }
+        ]
+      }
+    },
+    "/api/roster/monthly/{id}/cell-candidates": {
+      "get": {
+        "tags": [
+          "roster"
+        ],
+        "summary": "ListCellCandidates",
+        "operationId": "roster.ListCellCandidates",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Placeholder; verify the original route-specific ID type before implementing."
+          }
+        ]
+      }
+    },
+    "/api/roster/monthly/{id}/doctor-statuses": {
+      "get": {
+        "tags": [
+          "roster"
+        ],
+        "summary": "ListDoctorPickStatuses",
+        "operationId": "roster.ListDoctorPickStatuses",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Placeholder; verify the original route-specific ID type before implementing."
+          }
+        ]
+      }
+    },
+    "/api/roster/monthly/{id}/doctors/{doctorId}/reopen": {
+      "post": {
+        "tags": [
+          "roster"
+        ],
+        "summary": "ReopenForDoctor",
+        "operationId": "roster.ReopenForDoctor",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Placeholder; verify the original route-specific ID type before implementing."
+          },
+          {
+            "name": "doctorId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Placeholder; verify the original route-specific ID type before implementing."
+          }
+        ]
+      }
+    },
+    "/api/roster/monthly/{id}/doctors/{doctorId}/lock": {
+      "post": {
+        "tags": [
+          "roster"
+        ],
+        "summary": "LockForDoctor",
+        "operationId": "roster.LockForDoctor",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Placeholder; verify the original route-specific ID type before implementing."
+          },
+          {
+            "name": "doctorId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Placeholder; verify the original route-specific ID type before implementing."
+          }
+        ]
+      }
+    },
+    "/api/roster/monthly/{id}/doctors/{doctorId}/unlock": {
+      "post": {
+        "tags": [
+          "roster"
+        ],
+        "summary": "UnlockForDoctor",
+        "operationId": "roster.UnlockForDoctor",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Placeholder; verify the original route-specific ID type before implementing."
+          },
+          {
+            "name": "doctorId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Placeholder; verify the original route-specific ID type before implementing."
+          }
+        ]
+      }
+    },
+    "/api/roster/monthly/{id}/published-swap/impact": {
+      "get": {
+        "tags": [
+          "roster"
+        ],
+        "summary": "GetPublishedSwapImpact",
+        "operationId": "roster.GetPublishedSwapImpact",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Placeholder; verify the original route-specific ID type before implementing."
+          }
+        ]
+      }
+    },
+    "/api/roster/monthly/{id}/published-swap": {
+      "post": {
+        "tags": [
+          "roster"
+        ],
+        "summary": "SwapPublishedDoctor",
+        "operationId": "roster.SwapPublishedDoctor",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Placeholder; verify the original route-specific ID type before implementing."
+          }
+        ]
+      }
+    },
+    "/api/roster/monthly/{id}/audit-log": {
+      "get": {
+        "tags": [
+          "roster"
+        ],
+        "summary": "ListAuditLog",
+        "operationId": "roster.ListAuditLog",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Placeholder; verify the original route-specific ID type before implementing."
+          }
+        ]
+      }
+    },
+    "/api/roster/work-schedules": {
+      "get": {
+        "tags": [
+          "roster"
+        ],
+        "summary": "ListWorkSchedules",
+        "operationId": "roster.ListWorkSchedules",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/roster/work-schedules/me": {
+      "get": {
+        "tags": [
+          "roster"
+        ],
+        "summary": "ListMyWorkSchedules",
+        "operationId": "roster.ListMyWorkSchedules",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/roster/leave-requests": {
+      "post": {
+        "tags": [
+          "leave"
+        ],
+        "summary": "Create",
+        "operationId": "leave.Create",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "leave"
+        ],
+        "summary": "ListAll",
+        "operationId": "leave.ListAll",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/roster/leave-requests/me": {
+      "get": {
+        "tags": [
+          "leave"
+        ],
+        "summary": "ListMine",
+        "operationId": "leave.ListMine",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/roster/leave-requests/preview": {
+      "post": {
+        "tags": [
+          "leave"
+        ],
+        "summary": "Preview",
+        "operationId": "leave.Preview",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/roster/leave-requests/{id}/impact": {
+      "get": {
+        "tags": [
+          "leave"
+        ],
+        "summary": "Impact",
+        "operationId": "leave.Impact",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Placeholder; verify the original route-specific ID type before implementing."
+          }
+        ]
+      }
+    },
+    "/api/roster/leave-requests/{id}/approve": {
+      "post": {
+        "tags": [
+          "leave"
+        ],
+        "summary": "Approve",
+        "operationId": "leave.Approve",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Placeholder; verify the original route-specific ID type before implementing."
+          }
+        ]
+      }
+    },
+    "/api/roster/leave-requests/{id}/reject": {
+      "post": {
+        "tags": [
+          "leave"
+        ],
+        "summary": "Reject",
+        "operationId": "leave.Reject",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Placeholder; verify the original route-specific ID type before implementing."
+          }
+        ]
+      }
+    },
+    "/api/roster/leave-requests/{id}/withdraw": {
+      "post": {
+        "tags": [
+          "leave"
+        ],
+        "summary": "Withdraw",
+        "operationId": "leave.Withdraw",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Placeholder; verify the original route-specific ID type before implementing."
+          }
+        ]
+      }
+    },
+    "/api/clinic-closures": {
+      "get": {
+        "tags": [
+          "closure"
+        ],
+        "summary": "ListByMonth",
+        "operationId": "closure.ListByMonth",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "closure"
+        ],
+        "summary": "Add",
+        "operationId": "closure.Add",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/clinic-closures/impact": {
+      "get": {
+        "tags": [
+          "closure"
+        ],
+        "summary": "GetImpact",
+        "operationId": "closure.GetImpact",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/clinic-closures/impact-bulk": {
+      "get": {
+        "tags": [
+          "closure"
+        ],
+        "summary": "GetImpactBulk",
+        "operationId": "closure.GetImpactBulk",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/clinic-closures/bulk": {
+      "post": {
+        "tags": [
+          "closure"
+        ],
+        "summary": "AddBulk",
+        "operationId": "closure.AddBulk",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/clinic-closures/{id}": {
+      "delete": {
+        "tags": [
+          "closure"
+        ],
+        "summary": "Delete",
+        "operationId": "closure.Delete",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Placeholder; verify the original route-specific ID type before implementing."
+          }
+        ]
+      }
+    },
+    "/api/booking/available-slots": {
+      "get": {
+        "tags": [
+          "booking"
+        ],
+        "summary": "GetAvailableSlots",
+        "operationId": "booking.GetAvailableSlots",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/booking/slot-board": {
+      "get": {
+        "tags": [
+          "booking"
+        ],
+        "summary": "GetSlotBoard",
+        "operationId": "booking.GetSlotBoard",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/booking/hold": {
+      "post": {
+        "tags": [
+          "booking"
+        ],
+        "summary": "HoldSlot",
+        "operationId": "booking.HoldSlot",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/booking/release-hold": {
+      "post": {
+        "tags": [
+          "booking"
+        ],
+        "summary": "ReleaseHold",
+        "operationId": "booking.ReleaseHold",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/booking": {
+      "post": {
+        "tags": [
+          "booking"
+        ],
+        "summary": "CreateBooking",
+        "operationId": "booking.CreateBooking",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/booking/staff": {
+      "post": {
+        "tags": [
+          "booking"
+        ],
+        "summary": "CreateStaffBooking",
+        "operationId": "booking.CreateStaffBooking",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/booking/me": {
+      "get": {
+        "tags": [
+          "booking"
+        ],
+        "summary": "ListMyBookings",
+        "operationId": "booking.ListMyBookings",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/booking/{id}/cancel": {
+      "post": {
+        "tags": [
+          "booking"
+        ],
+        "summary": "CancelBooking",
+        "operationId": "booking.CancelBooking",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Placeholder; verify the original route-specific ID type before implementing."
+          }
+        ]
+      }
+    },
+    "/api/booking/work-schedules/{id}": {
+      "get": {
+        "tags": [
+          "booking"
+        ],
+        "summary": "ListBookingsForWorkSchedule",
+        "operationId": "booking.ListBookingsForWorkSchedule",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Placeholder; verify the original route-specific ID type before implementing."
+          }
+        ]
+      }
+    },
+    "/api/booking/{id}/check-in": {
+      "post": {
+        "tags": [
+          "booking"
+        ],
+        "summary": "CheckIn",
+        "operationId": "booking.CheckIn",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Placeholder; verify the original route-specific ID type before implementing."
+          }
+        ]
+      }
+    },
+    "/api/booking/{id}/undo-check-in": {
+      "post": {
+        "tags": [
+          "booking"
+        ],
+        "summary": "UndoCheckIn",
+        "operationId": "booking.UndoCheckIn",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Placeholder; verify the original route-specific ID type before implementing."
+          }
+        ]
+      }
+    },
+    "/api/booking/{id}/no-show": {
+      "post": {
+        "tags": [
+          "booking"
+        ],
+        "summary": "MarkNoShow",
+        "operationId": "booking.MarkNoShow",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Placeholder; verify the original route-specific ID type before implementing."
+          }
+        ]
+      }
+    },
+    "/api/booking/{id}/call": {
+      "post": {
+        "tags": [
+          "booking"
+        ],
+        "summary": "CallBooking",
+        "operationId": "booking.CallBooking",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Placeholder; verify the original route-specific ID type before implementing."
+          }
+        ]
+      }
+    },
+    "/api/booking/{id}/finish": {
+      "post": {
+        "tags": [
+          "booking"
+        ],
+        "summary": "FinishBooking",
+        "operationId": "booking.FinishBooking",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Placeholder; verify the original route-specific ID type before implementing."
+          }
+        ]
+      }
+    },
+    "/api/booking/{id}/call-failed": {
+      "post": {
+        "tags": [
+          "booking"
+        ],
+        "summary": "CallBookingFailed",
+        "operationId": "booking.CallBookingFailed",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Placeholder; verify the original route-specific ID type before implementing."
+          }
+        ]
+      }
+    },
+    "/api/booking/{id}/staff-cancel": {
+      "post": {
+        "tags": [
+          "booking"
+        ],
+        "summary": "StaffCancelBooking",
+        "operationId": "booking.StaffCancelBooking",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Placeholder; verify the original route-specific ID type before implementing."
+          }
+        ]
+      }
+    },
+    "/api/booking/{id}/alternative-doctors": {
+      "get": {
+        "tags": [
+          "booking"
+        ],
+        "summary": "GetAlternativeDoctors",
+        "operationId": "booking.GetAlternativeDoctors",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Placeholder; verify the original route-specific ID type before implementing."
+          }
+        ]
+      }
+    },
+    "/api/booking/{id}/staff-alternative-doctors": {
+      "get": {
+        "tags": [
+          "booking"
+        ],
+        "summary": "GetAlternativeDoctorsForStaff",
+        "operationId": "booking.GetAlternativeDoctorsForStaff",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Placeholder; verify the original route-specific ID type before implementing."
+          }
+        ]
+      }
+    },
+    "/api/booking/{id}/switch-doctor": {
+      "post": {
+        "tags": [
+          "booking"
+        ],
+        "summary": "SwitchDoctor",
+        "operationId": "booking.SwitchDoctor",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Placeholder; verify the original route-specific ID type before implementing."
+          }
+        ]
+      }
+    },
+    "/api/booking/{id}/staff-switch-doctor": {
+      "post": {
+        "tags": [
+          "booking"
+        ],
+        "summary": "StaffSwitchDoctor",
+        "operationId": "booking.StaffSwitchDoctor",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Placeholder; verify the original route-specific ID type before implementing."
+          }
+        ]
+      }
+    },
+    "/api/booking/{id}/reschedule": {
+      "post": {
+        "tags": [
+          "booking"
+        ],
+        "summary": "Reschedule",
+        "operationId": "booking.Reschedule",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Placeholder; verify the original route-specific ID type before implementing."
+          }
+        ]
+      }
+    },
+    "/api/booking/{id}/staff-reschedule": {
+      "post": {
+        "tags": [
+          "booking"
+        ],
+        "summary": "StaffReschedule",
+        "operationId": "booking.StaffReschedule",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Placeholder; verify the original route-specific ID type before implementing."
+          }
+        ]
+      }
+    },
+    "/api/booking/queue": {
+      "get": {
+        "tags": [
+          "booking"
+        ],
+        "summary": "GetQueue",
+        "operationId": "booking.GetQueue",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/booking/{id}/swap": {
+      "post": {
+        "tags": [
+          "booking"
+        ],
+        "summary": "ManualSwap",
+        "operationId": "booking.ManualSwap",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Placeholder; verify the original route-specific ID type before implementing."
+          }
+        ]
+      }
+    },
+    "/api/notifications/me": {
+      "get": {
+        "tags": [
+          "notification"
+        ],
+        "summary": "ListMine",
+        "operationId": "notification.ListMine",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/notifications/{id}/read": {
+      "post": {
+        "tags": [
+          "notification"
+        ],
+        "summary": "MarkRead",
+        "operationId": "notification.MarkRead",
+        "x-implementation-status": "not-implemented",
+        "description": "Scaffold route. Request DTO fields, authorization and business logic are pending; this endpoint intentionally returns 501.",
+        "responses": {
+          "501": {
+            "description": "Use case not implemented",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScaffoldError"
+                }
+              }
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Placeholder; verify the original route-specific ID type before implementing."
+          }
+        ]
+      }
+    },
+    "/healthz": {
+      "get": {
+        "tags": [
+          "system"
+        ],
+        "summary": "Liveness",
+        "operationId": "system.health",
+        "responses": {
+          "200": {
+            "description": "Process is alive"
+          }
+        }
+      }
+    },
+    "/readyz": {
+      "get": {
+        "tags": [
+          "system"
+        ],
+        "summary": "Readiness",
+        "operationId": "system.ready",
+        "description": "503 when PostgreSQL is absent or unreachable. Database readiness does not mean business modules are implemented.",
+        "responses": {
+          "200": {
+            "description": "PostgreSQL is reachable"
+          },
+          "503": {
+            "description": "Database is absent or unreachable"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ScaffoldError": {
+        "type": "object",
+        "required": [
+          "statusCode",
+          "message"
+        ],
+        "properties": {
+          "statusCode": {
+            "type": "integer",
+            "example": 1501,
+            "description": "Provisional scaffold code, not a verified Java business code"
+          },
+          "message": {
+            "type": "string",
+            "example": "booking.CreateBooking: use case is not implemented"
+          }
+        }
+      }
+    }
+  }
+}

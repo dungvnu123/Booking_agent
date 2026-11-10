@@ -1,0 +1,9 @@
+.git
+.tools
+.data
+.env
+.env.*
+!/.env.example
+**/*.exe
+**/*.test
+examples

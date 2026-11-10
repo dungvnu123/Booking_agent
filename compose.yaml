@@ -1,0 +1,59 @@
+name: abclinic
+services:
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: "${POSTGRES_USER:-abclinic}"
+      POSTGRES_DB: "${POSTGRES_DB:-abclinic}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:?Run scripts/setup.ps1 to create .env first}"
+      TZ: Asia/Ho_Chi_Minh
+    command: ["postgres", "-c", "timezone=Asia/Ho_Chi_Minh"]
+    ports:
+      - "127.0.0.1:${POSTGRES_PORT:-5433}:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    restart: unless-stopped
+  api:
+    build: .
+    ports:
+      - "127.0.0.1:${API_PORT:-8081}:8081"
+    environment:
+      SERVER_ADDR: ":8081"
+      GIN_MODE: release
+      APP_TIMEZONE: Asia/Ho_Chi_Minh
+      DATABASE_URL: "postgres://${POSTGRES_USER:-abclinic}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-abclinic}?sslmode=disable"
+      CORS_ORIGINS: "${CORS_ORIGINS:-http://localhost:5173,http://localhost:3000}"
+      ROSTERING_URL: "${ROSTERING_DOCKER_URL:-http://host.docker.internal:8000}"
+      ROSTERING_TIMEOUT: "${ROSTERING_TIMEOUT:-30s}"
+      STORAGE_DIR: /app/.data/uploads
+    volumes:
+      - uploads:/app/.data/uploads
+    depends_on:
+      postgres:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:8081/healthz"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+    restart: unless-stopped
+  worker:
+    build: .
+    command: ["/app/worker"]
+    profiles: ["workers"]
+    environment:
+      GIN_MODE: release
+      APP_TIMEZONE: Asia/Ho_Chi_Minh
+      DATABASE_URL: "postgres://${POSTGRES_USER:-abclinic}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB:-abclinic}?sslmode=disable"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+volumes:
+  postgres-data:
+  uploads:
