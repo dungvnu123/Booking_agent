@@ -15,6 +15,8 @@ func testApp(t *testing.T) *App {
 	t.Helper()
 	t.Setenv("DATABASE_URL", "")
 	t.Setenv("GIN_MODE", "test")
+	t.Setenv("JWT_ACCESS_SECRET", "")
+	t.Setenv("JWT_REFRESH_SECRET", "")
 	cfg, err := config.FromEnv()
 	if err != nil {
 		t.Fatal(err)
@@ -53,13 +55,17 @@ func TestScaffoldRoutesAndDocumentation(t *testing.T) {
 		}
 		rec := httptest.NewRecorder()
 		router.ServeHTTP(rec, httptest.NewRequest(route.Method, requestPath, nil))
-		if rec.Code != 501 {
-			t.Errorf("%s %s: got %d, want 501", route.Method, requestPath, rec.Code)
+		expectedStatus, expectedCode := 501, 1501
+		if strings.HasPrefix(route.Path, "/api/auth/") {
+			expectedStatus, expectedCode = 400, 400
+		}
+		if rec.Code != expectedStatus {
+			t.Errorf("%s %s: got %d, want %d", route.Method, requestPath, rec.Code, expectedStatus)
 		}
 		var response struct {
 			StatusCode int `json:"statusCode"`
 		}
-		if err := json.Unmarshal(rec.Body.Bytes(), &response); err != nil || response.StatusCode != 1501 {
+		if err := json.Unmarshal(rec.Body.Bytes(), &response); err != nil || response.StatusCode != expectedCode {
 			t.Fatalf("invalid scaffold response: %s", rec.Body.String())
 		}
 	}

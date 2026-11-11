@@ -33,6 +33,7 @@ type App struct {
 	Config config.Config
 	DB     *pgxpool.Pool
 	Clock  clock.Clock
+	Auth   *auth.Service
 }
 
 func New(ctx context.Context, cfg config.Config) (*App, error) {
@@ -46,6 +47,21 @@ func New(ctx context.Context, cfg config.Config) (*App, error) {
 	} else {
 		slog.Warn("DATABASE_URL is empty; API docs work but readiness returns 503")
 	}
+	var tokens *auth.Tokens
+	if cfg.JWTAccessSecret != "" {
+		var err error
+		tokens, err = auth.NewTokens(auth.TokenConfig{
+			AccessSecret: cfg.JWTAccessSecret, RefreshSecret: cfg.JWTRefreshSecret, Issuer: cfg.JWTIssuer,
+			AccessTTL: cfg.JWTAccessTTL, RefreshTTL: cfg.JWTRefreshTTL,
+		}, a.Clock)
+		if err != nil {
+			a.Close()
+			return nil, err
+		}
+	} else {
+		slog.Warn("JWT secrets are missing; run scripts/setup.ps1 to configure authentication")
+	}
+	a.Auth = auth.NewService(auth.NewPostgresRepository(a.DB), tokens)
 	return a, nil
 }
 func (a *App) Close() {
@@ -71,12 +87,10 @@ func (a *App) Router() *gin.Engine {
 			c.JSON(503, gin.H{"status": "not_ready", "reason": "database_unavailable"})
 			return
 		}
-		c.JSON(200, gin.H{"status": "ready", "businessModules": "not_implemented"})
+		c.JSON(200, gin.H{"status": "ready", "businessModules": "auth_implemented"})
 	})
 	api := r.Group("/api")
-	// Business handlers intentionally return 501. Before implementing a route,
-	// attach real Authenticate/RequireRoles plus per-record ownership checks.
-	auth.NewHandler(auth.NewService(a.Clock)).RegisterRoutes(api)
+	auth.NewHandler(a.Auth).RegisterRoutes(api)
 	user.NewHandler(user.NewService(a.Clock)).RegisterRoutes(api)
 	doctor.NewHandler(doctor.NewService(a.Clock)).RegisterRoutes(api)
 	patient.NewHandler(patient.NewService(a.Clock)).RegisterRoutes(api)
@@ -97,7 +111,7 @@ func (a *App) RunAPI(ctx context.Context) error {
 		WriteTimeout: 30 * time.Second, IdleTimeout: 60 * time.Second, MaxHeaderBytes: 1 << 20}
 	errCh := make(chan error, 1)
 	go func() { errCh <- srv.ListenAndServe() }()
-	slog.Info("ABClinic scaffold starting", "addr", a.Config.Addr, "swagger", "/swagger/index.html")
+	slog.Info("ABClinic API starting", "addr", a.Config.Addr, "swagger", "/swagger/index.html")
 	select {
 	case err := <-errCh:
 		if errors.Is(err, http.ErrServerClosed) {

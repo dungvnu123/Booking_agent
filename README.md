@@ -4,7 +4,7 @@ Khung cho một backend Go chia module nghiệp vụ, PostgreSQL dùng chung, AP
 
 Repository Booking_agent phát triển nền tảng đặt lịch cho ABClinic. Giai đoạn hiện tại xây backend nghiệp vụ; giai đoạn sau bổ sung agent tư vấn lịch phù hợp và thực hiện đặt lịch theo xác nhận của người dùng. Xem [hướng phát triển](docs/roadmap.md).
 
-**Hiện chỉ là khung:** 108 route nghiệp vụ được đăng ký dưới /api và trả HTTP 501. Chưa có đăng nhập/JWT verifier, truy vấn nghiệp vụ, CRUD thật, xếp lịch hay job chạy tự động. Swagger mô tả rõ trạng thái này. Không dùng dữ liệu demo để giả làm chức năng hoàn chỉnh.
+**Auth đã được triển khai:** đăng ký tài khoản, đăng nhập, refresh token và logout dùng PostgreSQL và JWT. 103 route nghiệp vụ khác vẫn trả HTTP 501.
 
 ## Chạy ngay trên Windows
 
@@ -122,3 +122,7 @@ powershell -ExecutionPolicy Bypass -File .\scripts\test-api.ps1
 Test smoke kiểm tra Swagger, health và 108 route trả đúng 501, không ghi dữ liệu bệnh nhân. Test PostgreSQL integration chỉ chạy khi có TEST_DATABASE_URL trỏ database kiểm thử; nếu không sẽ skip.
 
 Thứ tự triển khai đề xuất: auth/user/doctor → patient/medicine/examination/attachment → roster/solver/publish → booking/queue → leave/closure/notification/jobs.
+
+## Auth
+
+Run `scripts/setup.ps1`, start PostgreSQL, run `scripts/migrate.ps1`, then `scripts/run.ps1`. Public registration creates a PATIENT account; patient registration also links the profile. Access and refresh JWTs use separate secrets. Tests live in `tests/auth_test.go`.

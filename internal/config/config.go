@@ -14,15 +14,20 @@ import (
 )
 
 type Config struct {
-	Addr          string
-	Mode          string
-	DatabaseURL   string
-	DBMaxConns    int32
-	Location      *time.Location
-	CORSOrigins   []string
-	SolverURL     string
-	SolverTimeout time.Duration
-	StorageDir    string
+	Addr             string
+	Mode             string
+	DatabaseURL      string
+	DBMaxConns       int32
+	Location         *time.Location
+	CORSOrigins      []string
+	SolverURL        string
+	SolverTimeout    time.Duration
+	StorageDir       string
+	JWTAccessSecret  string
+	JWTRefreshSecret string
+	JWTIssuer        string
+	JWTAccessTTL     time.Duration
+	JWTRefreshTTL    time.Duration
 }
 
 func Load() (Config, error) {
@@ -35,11 +40,14 @@ func Load() (Config, error) {
 // FromEnv is separate from dotenv loading for deterministic tests.
 func FromEnv() (Config, error) {
 	cfg := Config{
-		Addr:        value("SERVER_ADDR", "127.0.0.1:8081"),
-		Mode:        value("GIN_MODE", "debug"),
-		DatabaseURL: os.Getenv("DATABASE_URL"),
-		SolverURL:   value("ROSTERING_URL", "http://localhost:8000"),
-		StorageDir:  value("STORAGE_DIR", ".data/uploads"),
+		Addr:             value("SERVER_ADDR", "127.0.0.1:8081"),
+		Mode:             value("GIN_MODE", "debug"),
+		DatabaseURL:      os.Getenv("DATABASE_URL"),
+		SolverURL:        value("ROSTERING_URL", "http://localhost:8000"),
+		StorageDir:       value("STORAGE_DIR", ".data/uploads"),
+		JWTAccessSecret:  os.Getenv("JWT_ACCESS_SECRET"),
+		JWTRefreshSecret: os.Getenv("JWT_REFRESH_SECRET"),
+		JWTIssuer:        value("JWT_ISSUER", "abclinic-backend"),
 	}
 	if cfg.Mode != "debug" && cfg.Mode != "release" && cfg.Mode != "test" {
 		return Config{}, errors.New("invalid GIN_MODE")
@@ -79,6 +87,19 @@ func FromEnv() (Config, error) {
 			return Config{}, fmt.Errorf("invalid CORS origin")
 		}
 		cfg.CORSOrigins = append(cfg.CORSOrigins, origin)
+	}
+	cfg.JWTAccessTTL, err = time.ParseDuration(value("JWT_ACCESS_TTL", "15m"))
+	if err != nil || cfg.JWTAccessTTL < time.Second {
+		return Config{}, errors.New("invalid JWT_ACCESS_TTL")
+	}
+	cfg.JWTRefreshTTL, err = time.ParseDuration(value("JWT_REFRESH_TTL", "168h"))
+	if err != nil || cfg.JWTRefreshTTL <= cfg.JWTAccessTTL {
+		return Config{}, errors.New("JWT_REFRESH_TTL must be greater than JWT_ACCESS_TTL")
+	}
+	if cfg.JWTAccessSecret != "" || cfg.JWTRefreshSecret != "" {
+		if len(cfg.JWTAccessSecret) < 32 || len(cfg.JWTRefreshSecret) < 32 || cfg.JWTAccessSecret == cfg.JWTRefreshSecret {
+			return Config{}, errors.New("JWT secrets must be distinct and at least 32 bytes each")
+		}
 	}
 	return cfg, nil
 }

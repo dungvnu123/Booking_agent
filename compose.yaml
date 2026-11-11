@@ -1,4 +1,4 @@
-name: abclinic
+name: booking-agent-abclinic
 services:
   postgres:
     image: postgres:16
@@ -9,7 +9,7 @@ services:
       TZ: Asia/Ho_Chi_Minh
     command: ["postgres", "-c", "timezone=Asia/Ho_Chi_Minh"]
     ports:
-      - "127.0.0.1:${POSTGRES_PORT:-5433}:5432"
+      - "127.0.0.1:${POSTGRES_PORT:-55433}:5432"
     volumes:
       - postgres-data:/var/lib/postgresql/data
     healthcheck:
@@ -31,6 +31,11 @@ services:
       ROSTERING_URL: "${ROSTERING_DOCKER_URL:-http://host.docker.internal:8000}"
       ROSTERING_TIMEOUT: "${ROSTERING_TIMEOUT:-30s}"
       STORAGE_DIR: /app/.data/uploads
+      JWT_ACCESS_SECRET: "${JWT_ACCESS_SECRET:-}"
+      JWT_REFRESH_SECRET: "${JWT_REFRESH_SECRET:-}"
+      JWT_ISSUER: "${JWT_ISSUER:-abclinic-backend}"
+      JWT_ACCESS_TTL: "${JWT_ACCESS_TTL:-15m}"
+      JWT_REFRESH_TTL: "${JWT_REFRESH_TTL:-168h}"
     volumes:
       - uploads:/app/.data/uploads
     depends_on:

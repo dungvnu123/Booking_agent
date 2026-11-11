@@ -21,5 +21,13 @@ foreach ($path in $spec.paths.PSObject.Properties) {
   $count++
  }
 }
-if ($count -ne 108) { throw "Expected 108 scaffold routes, found $count" }
-Write-Host 'Health + Swagger + 108 business routes (501) OK. No business data was written.'
+if ($count -ne 103) { throw "Expected 103 scaffold routes, found $count" }
+foreach ($route in @('register','register-patient','login','refresh_token','logout')) {
+ try {
+  Invoke-WebRequest -UseBasicParsing -Uri "$base/api/auth/$route" -Method POST -TimeoutSec 5 | Out-Null
+  throw "Expected 400 for empty auth request: $route"
+ } catch [Net.WebException] {
+  if (-not $_.Exception.Response -or [int]$_.Exception.Response.StatusCode -ne 400) { throw }
+ }
+}
+Write-Host 'Health + Swagger + 103 scaffold routes (501) + 5 auth validation routes (400) OK. No business data was written.'

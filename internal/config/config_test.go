@@ -3,7 +3,7 @@ package config
 import "testing"
 
 func clearConfig(t *testing.T) {
-	for _, key := range []string{"SERVER_ADDR", "GIN_MODE", "DATABASE_URL", "DB_MAX_CONNS", "APP_TIMEZONE", "CORS_ORIGINS", "ROSTERING_URL", "ROSTERING_TIMEOUT", "STORAGE_DIR"} {
+	for _, key := range []string{"SERVER_ADDR", "GIN_MODE", "DATABASE_URL", "DB_MAX_CONNS", "APP_TIMEZONE", "CORS_ORIGINS", "ROSTERING_URL", "ROSTERING_TIMEOUT", "STORAGE_DIR", "JWT_ACCESS_SECRET", "JWT_REFRESH_SECRET", "JWT_ISSUER", "JWT_ACCESS_TTL", "JWT_REFRESH_TTL"} {
 		t.Setenv(key, "")
 	}
 }

@@ -1,11 +1,7 @@
 package auth
 
-import (
-	"time"
-)
+import "time"
 
-// Initial domain outline from the supplied inventory, not a full DB mapping.
-// Keep persistence models separate from JSON request/response DTOs.
 type Role string
 
 const (
@@ -15,6 +11,25 @@ const (
 	RoleReceptionist Role = "RECEPTIONIST"
 	RolePatient      Role = "PATIENT"
 )
+
+type Account struct {
+	ID           string
+	Email        string
+	FullName     string
+	Role         Role
+	PasswordHash string
+	Active       bool
+}
+
+func (a Account) response() UserResponse {
+	return UserResponse{UserID: a.ID, Email: a.Email, FullName: a.FullName, Role: a.Role}
+}
+
+type NewAccount struct {
+	Account
+	Phone     string
+	PatientID string
+}
 
 type InvalidatedToken struct {
 	JTI       string
