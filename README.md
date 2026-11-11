@@ -1,4 +1,4 @@
-# Booking App backend ? Go + Gin
+# Booking App backend -> Go + Gin
 
 Khung cho một backend Go chia module nghiệp vụ, PostgreSQL dùng chung, API và worker là hai entry point. Không gồm AI. Theo [bản thiết kế](docs/backend-go-blueprint.md) và [chỉ mục nguồn](docs/backend-go-inventory.md) bạn cung cấp.
 
