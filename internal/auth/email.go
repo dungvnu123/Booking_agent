@@ -65,6 +65,7 @@ func (v *EmailVerification) send(ctx context.Context, account Account, raw strin
 		slog.ErrorContext(ctx, "verification email delivery failed", "error", err)
 		return ErrEmailDelivery
 	}
+	slog.InfoContext(ctx, "verification email accepted by SMTP")
 	return nil
 }
 
@@ -101,12 +102,18 @@ func (s *Service) ResendVerification(ctx context.Context, request ResendVerifica
 	}
 	account, err := s.repository.FindByEmail(ctx, email)
 	if errors.Is(err, ErrNotFound) {
+		slog.InfoContext(ctx, "verification email skipped", "reason", "account_not_found")
 		return nil
 	}
 	if err != nil {
 		return err
 	}
-	if account.EmailVerified || !account.Active {
+	if account.EmailVerified {
+		slog.InfoContext(ctx, "verification email skipped", "reason", "already_verified")
+		return nil
+	}
+	if !account.Active {
+		slog.InfoContext(ctx, "verification email skipped", "reason", "account_inactive")
 		return nil
 	}
 	token, raw, err := s.email.prepare(account.ID)
@@ -118,6 +125,7 @@ func (s *Service) ResendVerification(ctx context.Context, request ResendVerifica
 		return err
 	}
 	if !stored {
+		slog.InfoContext(ctx, "verification email skipped", "reason", "cooldown_or_account_changed")
 		return nil
 	}
 	return s.email.send(ctx, account, raw)

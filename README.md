@@ -196,3 +196,14 @@ powershell -ExecutionPolicy Bypass -File .\scripts\test-api.ps1
 Test smoke kiểm tra Swagger, health, 103 route scaffold trả 501 và 7 route auth POST từ chối body rỗng bằng 400 và trang xác nhận email trả HTML 200, không ghi dữ liệu bệnh nhân. Test auth mới nằm riêng tại `tests/auth_test.go`. Test PostgreSQL chỉ chạy khi có `TEST_DATABASE_URL`; test auth tạo và xóa schema ngẫu nhiên riêng, không dùng bảng ứng dụng.
 
 Thứ tự triển khai đề xuất: auth/user/doctor → patient/medicine/examination/attachment → roster/solver/publish → booking/queue → leave/closure/notification/jobs.
+
+### Email delivery diagnostics
+
+The public resend response remains HTTP 202 for privacy. The API terminal logs the actual branch without recording the recipient, password or token:
+
+- `verification email accepted by SMTP`: the SMTP server accepted the message; this does not prove Inbox delivery.
+- `verification email skipped reason=account_not_found`: no registered account matches the address.
+- `verification email skipped reason=already_verified`: verification is already complete.
+- `verification email skipped reason=account_inactive`: the account is inactive.
+- `verification email skipped reason=cooldown_or_account_changed`: the resend cooldown or a concurrent account change prevented another send.
+- `verification email delivery failed`: SMTP returned an error; the API returns 503.
