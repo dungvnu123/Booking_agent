@@ -1,36 +1,54 @@
 package tests
 
 import (
-	"abclinic.local/backend/internal/auth"
-	"abclinic.local/backend/internal/platform/clock"
-	"abclinic.local/backend/internal/platform/middleware"
-	"abclinic.local/backend/migrations"
 	"context"
+	"crypto/ecdsa"
+	"crypto/elliptic"
 	"crypto/rand"
+	"crypto/sha256"
+	"crypto/tls"
+	"crypto/x509"
+	"encoding/base64"
 	"encoding/hex"
 	"encoding/json"
 	"errors"
-	"github.com/gin-gonic/gin"
-	"github.com/golang-jwt/jwt/v5"
-	"github.com/jackc/pgx/v5"
-	"github.com/jackc/pgx/v5/pgxpool"
-	"golang.org/x/crypto/bcrypt"
+	"fmt"
+	"io"
+	"math/big"
+	"mime/quotedprintable"
+	"net"
 	"net/http"
 	"net/http/httptest"
+	stdmail "net/mail"
+	"net/textproto"
+	"net/url"
 	"os"
 	"strings"
 	"sync"
 	"testing"
 	"time"
+
+	"abclinic.local/backend/internal/auth"
+	"abclinic.local/backend/internal/config"
+	"abclinic.local/backend/internal/platform/clock"
+	"abclinic.local/backend/internal/platform/mailer"
+	"abclinic.local/backend/internal/platform/middleware"
+	"abclinic.local/backend/migrations"
+	"github.com/gin-gonic/gin"
+	"github.com/golang-jwt/jwt/v5"
+	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgxpool"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type memoryRepository struct {
-	mu       sync.Mutex
-	accounts map[string]auth.Account
-	revoked  map[string]bool
-	created  auth.NewAccount
+	mu          sync.Mutex
+	accounts    map[string]auth.Account
+	revoked     map[string]bool
+	created     auth.NewAccount
+	emailTokens map[string]auth.EmailToken
+	sender      *recordingSender
 }
-type testClock struct{ now time.Time }
 
 func (r *memoryRepository) Create(_ context.Context, value auth.NewAccount) (auth.Account, error) {
 	r.mu.Lock()
@@ -42,9 +60,9 @@ func (r *memoryRepository) Create(_ context.Context, value auth.NewAccount) (aut
 	}
 	r.accounts[value.ID] = value.Account
 	r.created = value
+	r.emailTokens[value.ID] = value.Verification
 	return value.Account, nil
 }
-
 func (r *memoryRepository) FindByEmail(_ context.Context, email string) (auth.Account, error) {
 	r.mu.Lock()
 	defer r.mu.Unlock()
@@ -55,7 +73,6 @@ func (r *memoryRepository) FindByEmail(_ context.Context, email string) (auth.Ac
 	}
 	return auth.Account{}, auth.ErrNotFound
 }
-
 func (r *memoryRepository) FindByID(_ context.Context, id string) (auth.Account, error) {
 	r.mu.Lock()
 	defer r.mu.Unlock()
@@ -65,13 +82,11 @@ func (r *memoryRepository) FindByID(_ context.Context, id string) (auth.Account,
 	}
 	return account, nil
 }
-
 func (r *memoryRepository) IsInvalidated(_ context.Context, id string) (bool, error) {
 	r.mu.Lock()
 	defer r.mu.Unlock()
 	return r.revoked[id], nil
 }
-
 func (r *memoryRepository) Revoke(_ context.Context, tokens []auth.InvalidatedToken, singleUse bool) error {
 	r.mu.Lock()
 	defer r.mu.Unlock()
@@ -84,22 +99,32 @@ func (r *memoryRepository) Revoke(_ context.Context, tokens []auth.InvalidatedTo
 	return nil
 }
 
+type testClock struct{ now time.Time }
+
 func (c *testClock) Now() time.Time { return c.now }
 
 func tokenConfig() auth.TokenConfig {
 	return auth.TokenConfig{AccessSecret: strings.Repeat("a", 32), RefreshSecret: strings.Repeat("r", 32), Issuer: "test", AccessTTL: time.Minute, RefreshTTL: time.Hour}
 }
-
 func newTestService(t *testing.T) (*auth.Service, *memoryRepository, *testClock) {
 	t.Helper()
-	repo := &memoryRepository{accounts: map[string]auth.Account{}, revoked: map[string]bool{}}
+	repo := &memoryRepository{accounts: map[string]auth.Account{}, revoked: map[string]bool{}, emailTokens: map[string]auth.EmailToken{}, sender: &recordingSender{}}
 	c := &testClock{now: time.Now().Truncate(time.Second)}
 	tokens, err := auth.NewTokens(tokenConfig(), c)
 	if err != nil {
 		t.Fatal(err)
 	}
-	return auth.NewService(repo, tokens), repo, c
+	verification, err := auth.NewEmailVerification(repo, repo.sender, c, emailConfig())
+	if err != nil {
+		t.Fatal(err)
+	}
+	service := auth.NewService(repo, tokens, verification)
+	testSenders.Store(service, repo.sender)
+	t.Cleanup(func() { testSenders.Delete(service) })
+	return service, repo, c
 }
+
+var testSenders sync.Map
 
 func registerUser(t *testing.T, s *auth.Service, email string) auth.UserResponse {
 	t.Helper()
@@ -107,9 +132,9 @@ func registerUser(t *testing.T, s *auth.Service, email string) auth.UserResponse
 	if err != nil {
 		t.Fatal(err)
 	}
+	verifyLastEmail(t, s, senderForService(t, s, email))
 	return user
 }
-
 func loginUser(t *testing.T, s *auth.Service, email string) auth.LoginResponse {
 	t.Helper()
 	result, err := s.Login(context.Background(), auth.LoginRequest{Email: email, Password: " Password123! "})
@@ -118,7 +143,6 @@ func loginUser(t *testing.T, s *auth.Service, email string) auth.LoginResponse {
 	}
 	return result
 }
-
 func tokenRequest(pair auth.TokenResponse) auth.TokenRequest {
 	return auth.TokenRequest{AccessToken: pair.AccessToken, RefreshToken: pair.RefreshToken}
 }
@@ -330,7 +354,6 @@ func authRouter(t *testing.T) *gin.Engine {
 	router, _ := authRouterWithState(t)
 	return router
 }
-
 func authRouterWithState(t *testing.T) (*gin.Engine, *memoryRepository) {
 	t.Helper()
 	gin.SetMode(gin.TestMode)
@@ -340,7 +363,6 @@ func authRouterWithState(t *testing.T) (*gin.Engine, *memoryRepository) {
 	router.GET("/protected", middleware.Authenticate(s), func(c *gin.Context) { c.Status(200) })
 	return router, repo
 }
-
 func request(router http.Handler, method, path, body, token string) *httptest.ResponseRecorder {
 	req := httptest.NewRequest(method, path, strings.NewReader(body))
 	req.Header.Set("Content-Type", "application/json")
@@ -351,9 +373,8 @@ func request(router http.Handler, method, path, body, token string) *httptest.Re
 	router.ServeHTTP(rec, req)
 	return rec
 }
-
 func TestHTTPAuthenticationFlow(t *testing.T) {
-	router := authRouter(t)
+	router, repo := authRouterWithState(t)
 	body := `{"email":"person@example.com","password":"Password123!","fullName":"Person","phone":"0901234567"}`
 	registered := request(router, "POST", "/api/auth/register-patient", body, "")
 	if registered.Code != 201 {
@@ -361,6 +382,15 @@ func TestHTTPAuthenticationFlow(t *testing.T) {
 	}
 	if strings.Contains(registered.Body.String(), "password") {
 		t.Fatal("password leaked")
+	}
+	blocked := request(router, "POST", "/api/auth/login", `{"email":"person@example.com","password":"Password123!"}`, "")
+	if blocked.Code != 403 {
+		t.Fatalf("unverified account logged in: %d", blocked.Code)
+	}
+	verificationBody, _ := json.Marshal(auth.VerifyEmailRequest{Token: repo.sender.token(t, "person@example.com")})
+	verified := request(router, "POST", "/api/auth/verify-email", string(verificationBody), "")
+	if verified.Code != 200 {
+		t.Fatalf("verify email: %d %s", verified.Code, verified.Body)
 	}
 	login := request(router, "POST", "/api/auth/login", `{"email":"person@example.com","password":"Password123!"}`, "")
 	var response struct {
@@ -399,7 +429,6 @@ func TestHTTPAuthenticationFlow(t *testing.T) {
 		t.Fatal("token response is cacheable")
 	}
 }
-
 func TestHTTPRejectsMalformedAndPrivilegedRegistration(t *testing.T) {
 	router := authRouter(t)
 	for _, body := range []string{
@@ -464,7 +493,12 @@ func TestAuthPostgres(t *testing.T) {
 		t.Fatal(err)
 	}
 	repo := auth.NewPostgresRepository(pool)
-	service := auth.NewService(repo, tokens)
+	sender := &recordingSender{}
+	verification, err := auth.NewEmailVerification(repo, sender, clock.Fixed{Time: time.Now().Truncate(time.Second)}, emailConfig())
+	if err != nil {
+		t.Fatal(err)
+	}
+	service := auth.NewService(repo, tokens, verification)
 	if _, err := pool.Exec(ctx, `INSERT INTO patients(id,full_name,phone) VALUES('existing','Existing Patient','0901111111')`); err != nil {
 		t.Fatal(err)
 	}
@@ -514,6 +548,7 @@ func TestAuthPostgres(t *testing.T) {
 	if success != 1 || duplicates != 1 {
 		t.Fatalf("concurrent registration: %d/%d", success, duplicates)
 	}
+	verifyLastEmail(t, service, sender.token(t, "person@example.com"))
 	login, err := service.Login(ctx, auth.LoginRequest{Email: "PERSON@example.com", Password: "Password123!"})
 	if err != nil {
 		t.Fatal(err)
@@ -532,6 +567,67 @@ func TestAuthPostgres(t *testing.T) {
 		t.Fatal("logged out JWT accepted")
 	}
 
+	extra, err := service.Register(ctx, auth.RegisterRequest{Email: "sql-verify@example.com", Password: "Password123!", FullName: "SQL Verify"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, err := service.Login(ctx, auth.LoginRequest{Email: extra.Email, Password: "Password123!"}); !errors.Is(err, auth.ErrEmailUnverified) {
+		t.Fatal("SQL account logged in before email verification")
+	}
+	oldToken := sender.token(t, extra.Email)
+	if _, err := pool.Exec(ctx, `UPDATE email_verifications SET expires_at=$2,last_sent_at=$3 WHERE user_id=$1`, extra.UserID, time.Now().Add(-time.Minute), time.Now().Add(-2*time.Minute)); err != nil {
+		t.Fatal(err)
+	}
+	if err := service.VerifyEmail(ctx, auth.VerifyEmailRequest{Token: oldToken}); !errors.Is(err, auth.ErrInvalidEmailToken) {
+		t.Fatal("SQL accepted expired email token")
+	}
+	if err := service.ResendVerification(ctx, auth.ResendVerificationRequest{Email: extra.Email}); err != nil {
+		t.Fatal(err)
+	}
+	newToken := sender.token(t, extra.Email)
+	if newToken == oldToken {
+		t.Fatal("SQL resend did not replace email token")
+	}
+	if err := service.VerifyEmail(ctx, auth.VerifyEmailRequest{Token: oldToken}); !errors.Is(err, auth.ErrInvalidEmailToken) {
+		t.Fatal("SQL accepted replaced email token")
+	}
+	verifyLastEmail(t, service, newToken)
+	if err := service.VerifyEmail(ctx, auth.VerifyEmailRequest{Token: newToken}); !errors.Is(err, auth.ErrInvalidEmailToken) {
+		t.Fatal("SQL reused email token")
+	}
+}
+
+func TestSwaggerSameOriginAuth(t *testing.T) {
+	for _, tc := range []struct {
+		name, target, origin string
+		status               int
+	}{
+		{"swagger localhost", "http://localhost:8081/api/auth/register", "http://localhost:8081", 201},
+		{"swagger loopback", "http://127.0.0.1:8081/api/auth/register", "http://127.0.0.1:8081", 201},
+		{"swagger HTTPS", "https://api.example.com/api/auth/register", "https://api.example.com", 201},
+		{"configured frontend", "http://localhost:8081/api/auth/register", "http://localhost:5173", 201},
+		{"unconfigured website", "http://localhost:8081/api/auth/register", "https://other.example", 403},
+		{"different scheme", "http://localhost:8081/api/auth/register", "https://localhost:8081", 403},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			gin.SetMode(gin.TestMode)
+			service, _, _ := newTestService(t)
+			router := gin.New()
+			router.Use(middleware.CORS([]string{"http://localhost:5173", "http://localhost:3000"}))
+			auth.NewHandler(service).RegisterRoutes(router.Group("/api"))
+			req := httptest.NewRequest(http.MethodPost, tc.target, strings.NewReader(`{"email":"swagger@example.com","password":"Password123!","fullName":"Swagger Test"}`))
+			req.Header.Set("Origin", tc.origin)
+			req.Header.Set("Content-Type", "application/json")
+			rec := httptest.NewRecorder()
+			router.ServeHTTP(rec, req)
+			if rec.Code != tc.status {
+				t.Fatalf("got %d, want %d: %s", rec.Code, tc.status, rec.Body)
+			}
+			if tc.status == 201 && rec.Header().Get("Access-Control-Allow-Origin") != tc.origin {
+				t.Fatal("missing allowed origin")
+			}
+		})
+	}
 }
 
 func TestRegistrationPasswordPolicy(t *testing.T) {
@@ -619,35 +715,469 @@ func TestExistingPasswordStillLogsIn(t *testing.T) {
 	}
 }
 
-func TestSwaggerSameOriginAuth(t *testing.T) {
-	for _, tc := range []struct {
-		name, target, origin string
-		status               int
-	}{
-		{"swagger localhost", "http://localhost:8081/api/auth/register", "http://localhost:8081", 201},
-		{"swagger loopback", "http://127.0.0.1:8081/api/auth/register", "http://127.0.0.1:8081", 201},
-		{"swagger HTTPS", "https://api.example.com/api/auth/register", "https://api.example.com", 201},
-		{"configured frontend", "http://localhost:8081/api/auth/register", "http://localhost:5173", 201},
-		{"unconfigured website", "http://localhost:8081/api/auth/register", "https://other.example", 403},
-		{"different scheme", "http://localhost:8081/api/auth/register", "https://localhost:8081", 403},
-	} {
-		t.Run(tc.name, func(t *testing.T) {
-			gin.SetMode(gin.TestMode)
-			service, _, _ := newTestService(t)
-			router := gin.New()
-			router.Use(middleware.CORS([]string{"http://localhost:5173", "http://localhost:3000"}))
-			auth.NewHandler(service).RegisterRoutes(router.Group("/api"))
-			req := httptest.NewRequest(http.MethodPost, tc.target, strings.NewReader(`{"email":"swagger@example.com","password":"Password123!","fullName":"Swagger Test"}`))
-			req.Header.Set("Origin", tc.origin)
-			req.Header.Set("Content-Type", "application/json")
-			rec := httptest.NewRecorder()
-			router.ServeHTTP(rec, req)
-			if rec.Code != tc.status {
-				t.Fatalf("got %d, want %d: %s", rec.Code, tc.status, rec.Body)
+type sentEmail struct{ to, subject, body string }
+
+type recordingSender struct {
+	mu       sync.Mutex
+	messages []sentEmail
+	failure  error
+}
+
+func (s *recordingSender) Send(_ context.Context, to, subject, body string) error {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	if s.failure != nil {
+		return s.failure
+	}
+	s.messages = append(s.messages, sentEmail{to: to, subject: subject, body: body})
+	return nil
+}
+func (s *recordingSender) token(t *testing.T, email string) string {
+	t.Helper()
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	for i := len(s.messages) - 1; i >= 0; i-- {
+		message := s.messages[i]
+		if message.to != normalizeTestEmail(email) {
+			continue
+		}
+		for _, word := range strings.Fields(message.body) {
+			link, err := url.Parse(word)
+			if err != nil || link.Fragment == "" {
+				continue
 			}
-			if tc.status == 201 && rec.Header().Get("Access-Control-Allow-Origin") != tc.origin {
-				t.Fatal("missing allowed origin")
+			values, err := url.ParseQuery(link.Fragment)
+			if err == nil && values.Get("token") != "" {
+				return values.Get("token")
+			}
+		}
+	}
+	t.Fatal("verification email was not captured")
+	return ""
+}
+func (s *recordingSender) count() int        { s.mu.Lock(); defer s.mu.Unlock(); return len(s.messages) }
+func normalizeTestEmail(email string) string { return strings.ToLower(strings.TrimSpace(email)) }
+func senderForService(t *testing.T, service *auth.Service, email string) string {
+	t.Helper()
+	value, ok := testSenders.Load(service)
+	if !ok {
+		t.Fatal("missing test sender")
+	}
+	return value.(*recordingSender).token(t, email)
+}
+func emailConfig() auth.EmailConfig {
+	return auth.EmailConfig{VerificationURL: "http://localhost:8081/api/auth/verify-email", TokenTTL: 15 * time.Minute, ResendCooldown: time.Minute}
+}
+func verifyLastEmail(t *testing.T, service *auth.Service, token string) {
+	t.Helper()
+	if err := service.VerifyEmail(context.Background(), auth.VerifyEmailRequest{Token: token}); err != nil {
+		t.Fatal(err)
+	}
+}
+
+func (r *memoryRepository) ReplaceEmailToken(_ context.Context, token auth.EmailToken, cutoff time.Time) (bool, error) {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	account, ok := r.accounts[token.AccountID]
+	if !ok || !account.Active || account.EmailVerified {
+		return false, nil
+	}
+	if previous, ok := r.emailTokens[token.AccountID]; ok && previous.SentAt.After(cutoff) {
+		return false, nil
+	}
+	r.emailTokens[token.AccountID] = token
+	return true, nil
+}
+func (r *memoryRepository) VerifyEmail(_ context.Context, hash string, now time.Time) error {
+	r.mu.Lock()
+	defer r.mu.Unlock()
+	for id, token := range r.emailTokens {
+		if token.Hash != hash {
+			continue
+		}
+		account, ok := r.accounts[id]
+		if !ok || account.EmailVerified || !token.ExpiresAt.After(now) {
+			return auth.ErrInvalidEmailToken
+		}
+		if !account.Active {
+			return auth.ErrInactive
+		}
+		account.EmailVerified = true
+		r.accounts[id] = account
+		delete(r.emailTokens, id)
+		return nil
+	}
+	return auth.ErrInvalidEmailToken
+}
+
+func TestEmailVerificationRequiredAndSingleUse(t *testing.T) {
+	service, repo, _ := newTestService(t)
+	user, err := service.Register(context.Background(), auth.RegisterRequest{Email: "verify@example.com", Password: "Password123!", FullName: "Person"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if user.EmailVerified {
+		t.Fatal("registration marked email verified")
+	}
+	if _, err := service.Login(context.Background(), auth.LoginRequest{Email: user.Email, Password: "Password123!"}); !errors.Is(err, auth.ErrEmailUnverified) {
+		t.Fatal("unverified email was able to log in")
+	}
+	token := repo.sender.token(t, user.Email)
+	decoded, _ := base64.RawURLEncoding.DecodeString(token)
+	digest := sha256.Sum256(decoded)
+	stored := repo.emailTokens[user.UserID]
+	if stored.Hash != hex.EncodeToString(digest[:]) || strings.Contains(stored.Hash, token) {
+		t.Fatal("verification token was not hashed")
+	}
+	verifyLastEmail(t, service, token)
+	if _, err := service.Login(context.Background(), auth.LoginRequest{Email: user.Email, Password: "Password123!"}); err != nil {
+		t.Fatal(err)
+	}
+	if err := service.VerifyEmail(context.Background(), auth.VerifyEmailRequest{Token: token}); !errors.Is(err, auth.ErrInvalidEmailToken) {
+		t.Fatal("verification token was reused")
+	}
+}
+
+func TestExpiredEmailAndResend(t *testing.T) {
+	service, repo, c := newTestService(t)
+	user, err := service.Register(context.Background(), auth.RegisterRequest{Email: "resend@example.com", Password: "Password123!", FullName: "Person"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	initial := repo.sender.token(t, user.Email)
+	for _, email := range []string{user.Email, "missing@example.com"} {
+		if err := service.ResendVerification(context.Background(), auth.ResendVerificationRequest{Email: email}); err != nil {
+			t.Fatal(err)
+		}
+	}
+	if repo.sender.count() != 1 {
+		t.Fatal("resend ignored cooldown or sent to unknown account")
+	}
+	c.now = c.now.Add(15 * time.Minute)
+	if err := service.VerifyEmail(context.Background(), auth.VerifyEmailRequest{Token: initial}); !errors.Is(err, auth.ErrInvalidEmailToken) {
+		t.Fatal("expired verification token accepted")
+	}
+	if err := service.ResendVerification(context.Background(), auth.ResendVerificationRequest{Email: user.Email}); err != nil {
+		t.Fatal(err)
+	}
+	replacement := repo.sender.token(t, user.Email)
+	if replacement == initial {
+		t.Fatal("resend reused old token")
+	}
+	if err := service.VerifyEmail(context.Background(), auth.VerifyEmailRequest{Token: initial}); !errors.Is(err, auth.ErrInvalidEmailToken) {
+		t.Fatal("old token survived resend")
+	}
+	verifyLastEmail(t, service, replacement)
+	if err := service.ResendVerification(context.Background(), auth.ResendVerificationRequest{Email: user.Email}); err != nil {
+		t.Fatal(err)
+	}
+	if repo.sender.count() != 2 {
+		t.Fatal("sent verification to already verified account")
+	}
+}
+
+func TestSMTPFailureLeavesRecoverablePendingAccount(t *testing.T) {
+	service, repo, c := newTestService(t)
+	repo.sender.failure = errors.New("SMTP unavailable")
+	_, err := service.Register(context.Background(), auth.RegisterRequest{Email: "retry@example.com", Password: "Password123!", FullName: "Person"})
+	if !errors.Is(err, auth.ErrEmailDelivery) || len(repo.accounts) != 1 {
+		t.Fatalf("expected pending account and delivery error, got %v", err)
+	}
+	repo.sender.failure = nil
+	c.now = c.now.Add(time.Minute)
+	if err := service.ResendVerification(context.Background(), auth.ResendVerificationRequest{Email: "retry@example.com"}); err != nil {
+		t.Fatal(err)
+	}
+	verifyLastEmail(t, service, repo.sender.token(t, "retry@example.com"))
+}
+
+func TestRegistrationRequiresEmailSender(t *testing.T) {
+	_, repo, _ := newTestService(t)
+	tokens, err := auth.NewTokens(tokenConfig(), clock.Fixed{Time: time.Now()})
+	if err != nil {
+		t.Fatal(err)
+	}
+	unavailable := auth.NewService(repo, tokens, nil)
+	_, err = unavailable.Register(context.Background(), auth.RegisterRequest{Email: "no-smtp@example.com", Password: "Password123!", FullName: "Person"})
+	if !errors.Is(err, auth.ErrEmailNotConfigured) || len(repo.accounts) != 0 {
+		t.Fatal("missing sender created an account")
+	}
+}
+
+func TestEmailVerificationCannotUnblockInactiveAccount(t *testing.T) {
+	service, repo, _ := newTestService(t)
+	user, err := service.Register(context.Background(), auth.RegisterRequest{Email: "blocked@example.com", Password: "Password123!", FullName: "Person"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	account := repo.accounts[user.UserID]
+	account.Active = false
+	repo.accounts[user.UserID] = account
+	err = service.VerifyEmail(context.Background(), auth.VerifyEmailRequest{Token: repo.sender.token(t, user.Email)})
+	if !errors.Is(err, auth.ErrInactive) || repo.accounts[user.UserID].Active {
+		t.Fatal("email verification bypassed account lock")
+	}
+}
+
+func TestVerificationPageDoesNotConsumeToken(t *testing.T) {
+	router, repo := authRouterWithState(t)
+	registered := request(router, "POST", "/api/auth/register", `{"email":"page@example.com","password":"Password123!","fullName":"Person"}`, "")
+	if registered.Code != 201 {
+		t.Fatal(registered.Body)
+	}
+	page := request(router, "GET", "/api/auth/verify-email", "", "")
+	if page.Code != 200 || !strings.Contains(page.Header().Get("Content-Type"), "text/html") || page.Header().Get("Referrer-Policy") != "no-referrer" || !strings.Contains(page.Header().Get("Content-Security-Policy"), "nonce-") {
+		t.Fatal("verification page is not protected")
+	}
+	if strings.Contains(page.Body.String(), repo.sender.token(t, "page@example.com")) {
+		t.Fatal("verification token leaked into HTML")
+	}
+	login := request(router, "POST", "/api/auth/login", `{"email":"page@example.com","password":"Password123!"}`, "")
+	if login.Code != 403 {
+		t.Fatal("GET verification page activated account")
+	}
+	body, _ := json.Marshal(auth.VerifyEmailRequest{Token: repo.sender.token(t, "page@example.com")})
+	if verified := request(router, "POST", "/api/auth/verify-email", string(body), ""); verified.Code != 200 {
+		t.Fatal(verified.Body)
+	}
+}
+
+func TestConcurrentEmailResendAndVerification(t *testing.T) {
+	service, repo, c := newTestService(t)
+	user, err := service.Register(context.Background(), auth.RegisterRequest{Email: "concurrent-email@example.com", Password: "Password123!", FullName: "Person"})
+	if err != nil {
+		t.Fatal(err)
+	}
+	c.now = c.now.Add(time.Minute)
+	results := make(chan error, 2)
+	for range 2 {
+		go func() {
+			results <- service.ResendVerification(context.Background(), auth.ResendVerificationRequest{Email: user.Email})
+		}()
+	}
+	for range 2 {
+		if err := <-results; err != nil {
+			t.Fatal(err)
+		}
+	}
+	if repo.sender.count() != 2 {
+		t.Fatal("concurrent resend sent duplicate email")
+	}
+	token := repo.sender.token(t, user.Email)
+	for range 2 {
+		go func() { results <- service.VerifyEmail(context.Background(), auth.VerifyEmailRequest{Token: token}) }()
+	}
+	success, rejected := 0, 0
+	for range 2 {
+		switch err := <-results; {
+		case err == nil:
+			success++
+		case errors.Is(err, auth.ErrInvalidEmailToken):
+			rejected++
+		default:
+			t.Fatal(err)
+		}
+	}
+	if success != 1 || rejected != 1 {
+		t.Fatal("verification was not single-use under concurrency")
+	}
+}
+
+func TestEmailSMTPConfiguration(t *testing.T) {
+	keys := []string{"SMTP_HOST", "SMTP_PORT", "SMTP_USERNAME", "SMTP_PASSWORD", "SMTP_FROM", "SMTP_ENCRYPTION", "SMTP_TIMEOUT", "EMAIL_VERIFICATION_URL", "EMAIL_VERIFICATION_TTL", "EMAIL_RESEND_COOLDOWN"}
+	for _, key := range keys {
+		t.Setenv(key, "")
+	}
+	t.Setenv("SMTP_HOST", "smtp.gmail.com")
+	t.Setenv("SMTP_USERNAME", "sender@example.com")
+	t.Setenv("SMTP_PASSWORD", "test-app-password")
+	t.Setenv("SMTP_FROM", "ABClinic <sender@example.com>")
+	if _, err := config.FromEnv(); err != nil {
+		t.Fatal(err)
+	}
+	for _, tc := range []struct{ key, value string }{
+		{"SMTP_PORT", "0"}, {"SMTP_PORT", "65536"}, {"SMTP_ENCRYPTION", "none"},
+		{"SMTP_FROM", "invalid"}, {"SMTP_FROM", "sender@example.com\r\nBcc:other@example.com"},
+		{"SMTP_TIMEOUT", "0s"}, {"EMAIL_VERIFICATION_URL", "javascript:alert(1)"},
+		{"EMAIL_VERIFICATION_URL", "https://example.com/verify?token=unsafe"},
+		{"EMAIL_VERIFICATION_TTL", "0s"}, {"EMAIL_RESEND_COOLDOWN", "30m"},
+	} {
+		t.Run(tc.key+tc.value, func(t *testing.T) {
+			t.Setenv(tc.key, tc.value)
+			if _, err := config.FromEnv(); err == nil {
+				t.Fatal("invalid mail configuration accepted")
 			}
 		})
+	}
+}
+
+type smtpDelivery struct {
+	data          []byte
+	authenticated bool
+	err           error
+}
+
+func smtpTestServer(t *testing.T, encryption string, offerSTARTTLS bool) (mailer.Config, <-chan smtpDelivery) {
+	t.Helper()
+	key, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
+	if err != nil {
+		t.Fatal(err)
+	}
+	now := time.Now()
+	certificate := &x509.Certificate{SerialNumber: big.NewInt(now.UnixNano()), NotBefore: now.Add(-time.Minute), NotAfter: now.Add(time.Hour), IPAddresses: []net.IP{net.IPv4(127, 0, 0, 1)}, KeyUsage: x509.KeyUsageDigitalSignature | x509.KeyUsageCertSign, ExtKeyUsage: []x509.ExtKeyUsage{x509.ExtKeyUsageServerAuth}, IsCA: true, BasicConstraintsValid: true}
+	der, err := x509.CreateCertificate(rand.Reader, certificate, certificate, &key.PublicKey, key)
+	if err != nil {
+		t.Fatal(err)
+	}
+	parsed, err := x509.ParseCertificate(der)
+	if err != nil {
+		t.Fatal(err)
+	}
+	roots := x509.NewCertPool()
+	roots.AddCert(parsed)
+	serverCertificate := tls.Certificate{Certificate: [][]byte{der}, PrivateKey: key}
+	listener, err := net.Listen("tcp", "127.0.0.1:0")
+	if err != nil {
+		t.Fatal(err)
+	}
+	t.Cleanup(func() { _ = listener.Close() })
+	delivery := make(chan smtpDelivery, 1)
+	go func() {
+		connection, err := listener.Accept()
+		if err != nil {
+			delivery <- smtpDelivery{err: err}
+			return
+		}
+		defer connection.Close()
+		_ = connection.SetDeadline(time.Now().Add(5 * time.Second))
+		result := serveSMTP(connection, serverCertificate, encryption, offerSTARTTLS)
+		delivery <- result
+	}()
+	return mailer.Config{Host: "127.0.0.1", Port: listener.Addr().(*net.TCPAddr).Port, Username: "sender@example.com", Password: "test-password", From: "ABClinic <sender@example.com>", Encryption: encryption, Timeout: 3 * time.Second, RootCAs: roots}, delivery
+}
+
+func serveSMTP(connection net.Conn, certificate tls.Certificate, encryption string, offerSTARTTLS bool) smtpDelivery {
+	result := smtpDelivery{}
+	encrypted := encryption == "tls"
+	tlsConfig := &tls.Config{Certificates: []tls.Certificate{certificate}, MinVersion: tls.VersionTLS12}
+	if encrypted {
+		secure := tls.Server(connection, tlsConfig)
+		if err := secure.Handshake(); err != nil {
+			result.err = err
+			return result
+		}
+		connection = secure
+	}
+	protocol := textproto.NewConn(connection)
+	if err := protocol.PrintfLine("220 local test SMTP"); err != nil {
+		result.err = err
+		return result
+	}
+	for {
+		line, err := protocol.ReadLine()
+		if err != nil {
+			result.err = err
+			return result
+		}
+		switch {
+		case strings.HasPrefix(line, "EHLO "):
+			if !encrypted && offerSTARTTLS {
+				err = protocol.PrintfLine("250-localhost\r\n250 STARTTLS")
+			} else {
+				err = protocol.PrintfLine("250-localhost\r\n250 AUTH PLAIN")
+			}
+		case line == "STARTTLS":
+			if !offerSTARTTLS {
+				result.err = errors.New("unexpected STARTTLS")
+				return result
+			}
+			if err = protocol.PrintfLine("220 begin TLS"); err != nil {
+				result.err = err
+				return result
+			}
+			secure := tls.Server(connection, tlsConfig)
+			if err = secure.Handshake(); err != nil {
+				result.err = err
+				return result
+			}
+			connection = secure
+			protocol = textproto.NewConn(connection)
+			encrypted = true
+		case strings.HasPrefix(line, "AUTH PLAIN "):
+			credentials, decodeErr := base64.StdEncoding.DecodeString(strings.TrimPrefix(line, "AUTH PLAIN "))
+			if !encrypted || decodeErr != nil || string(credentials) != "\x00sender@example.com\x00test-password" {
+				result.err = errors.New("invalid or insecure SMTP authentication")
+				return result
+			}
+			result.authenticated = true
+			err = protocol.PrintfLine("235 authenticated")
+		case strings.HasPrefix(line, "MAIL FROM:"), strings.HasPrefix(line, "RCPT TO:"):
+			err = protocol.PrintfLine("250 OK")
+		case line == "DATA":
+			if err = protocol.PrintfLine("354 send message"); err != nil {
+				result.err = err
+				return result
+			}
+			result.data, err = protocol.ReadDotBytes()
+			if err == nil {
+				err = protocol.PrintfLine("250 accepted")
+			}
+		case line == "QUIT":
+			result.err = protocol.PrintfLine("221 bye")
+			return result
+		default:
+			result.err = fmt.Errorf("unexpected SMTP command")
+			return result
+		}
+		if err != nil {
+			result.err = err
+			return result
+		}
+	}
+}
+
+func TestSMTPVerificationDeliveryUsesTLS(t *testing.T) {
+	for _, encryption := range []string{"tls", "starttls"} {
+		t.Run(encryption, func(t *testing.T) {
+			cfg, delivered := smtpTestServer(t, encryption, true)
+			sender, err := mailer.NewSMTP(cfg)
+			if err != nil {
+				t.Fatal(err)
+			}
+			body := "Xác thực email ABClinic\nhttp://localhost:8081/api/auth/verify-email#token=local-test-only\n"
+			if err := sender.Send(context.Background(), "recipient@example.com", "Xác thực email", body); err != nil {
+				t.Fatal(err)
+			}
+			result := <-delivered
+			if result.err != nil || !result.authenticated {
+				t.Fatalf("SMTP delivery: %v", result.err)
+			}
+			message, err := stdmail.ReadMessage(strings.NewReader(string(result.data)))
+			if err != nil {
+				t.Fatal(err)
+			}
+			decoded, err := io.ReadAll(quotedprintable.NewReader(message.Body))
+			if err != nil {
+				t.Fatal(err)
+			}
+			if strings.ReplaceAll(string(decoded), "\r\n", "\n") != body {
+				t.Fatalf("SMTP message body: got %q, want %q", string(decoded), body)
+			}
+		})
+	}
+}
+
+func TestSMTPRefusesPlaintextFallback(t *testing.T) {
+	cfg, delivered := smtpTestServer(t, "starttls", false)
+	sender, err := mailer.NewSMTP(cfg)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := sender.Send(context.Background(), "recipient@example.com", "Subject", "Body"); err == nil {
+		t.Fatal("SMTP accepted a server without STARTTLS")
+	}
+	result := <-delivered
+	if result.authenticated || len(result.data) != 0 {
+		t.Fatal("credentials or email sent without TLS")
 	}
 }

@@ -22,10 +22,11 @@ type TokenRequest struct {
 }
 
 type UserResponse struct {
-	UserID   string `json:"userId"`
-	Email    string `json:"email"`
-	FullName string `json:"fullName"`
-	Role     Role   `json:"role"`
+	UserID        string `json:"userId"`
+	Email         string `json:"email"`
+	FullName      string `json:"fullName"`
+	Role          Role   `json:"role"`
+	EmailVerified bool   `json:"emailVerified"`
 }
 
 type TokenResponse struct {
@@ -36,4 +37,12 @@ type TokenResponse struct {
 type LoginResponse struct {
 	TokenResponse
 	User UserResponse `json:"user"`
+}
+
+type VerifyEmailRequest struct {
+	Token string `json:"token"`
+}
+
+type ResendVerificationRequest struct {
+	Email string `json:"email"`
 }

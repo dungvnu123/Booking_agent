@@ -2,8 +2,8 @@
   "openapi": "3.0.3",
   "info": {
     "title": "ABClinic Go — scaffold",
-    "version": "0.2.0",
-    "description": "Account registration, JWT authentication, refresh rotation and logout are implemented. Other 103 business routes remain HTTP 501 scaffolds."
+    "version": "0.3.0",
+    "description": "Authentication with PostgreSQL, BCrypt, access/refresh JWT, SMTP email verification, patient registration and token revocation is implemented. The other 103 business routes remain HTTP 501 scaffolds. AI routes are excluded."
   },
   "servers": [
     {
@@ -69,7 +69,7 @@
         "summary": "Register",
         "operationId": "auth.Register",
         "x-implementation-status": "implemented",
-        "description": "Creates a PATIENT account.",
+        "description": "Creates a PATIENT account. Requires SMTP. Creates an unverified account and sends a verification link. If delivery fails after creation, returns 503; use resend-verification to retry.",
         "responses": {
           "201": {
             "description": "Success",
@@ -138,7 +138,7 @@
             }
           },
           "503": {
-            "description": "Authentication configuration or database unavailable",
+            "description": "Auth configuration or database unavailable",
             "content": {
               "application/json": {
                 "schema": {
@@ -179,7 +179,7 @@
         "summary": "RegisterPatient",
         "operationId": "auth.RegisterPatient",
         "x-implementation-status": "implemented",
-        "description": "Creates a PATIENT account and links or creates its patient profile.",
+        "description": "Creates an account and links or creates the patient profile atomically by phone. Requires SMTP. Creates an unverified account and sends a verification link. If delivery fails after creation, returns 503; use resend-verification to retry.",
         "responses": {
           "201": {
             "description": "Success",
@@ -248,7 +248,7 @@
             }
           },
           "503": {
-            "description": "Authentication configuration or database unavailable",
+            "description": "Auth configuration or database unavailable",
             "content": {
               "application/json": {
                 "schema": {
@@ -289,7 +289,7 @@
         "summary": "Login",
         "operationId": "auth.Login",
         "x-implementation-status": "implemented",
-        "description": "Validates BCrypt password and active account, then issues access and refresh JWTs.",
+        "description": "Validates BCrypt password and active account, then issues access and refresh JWTs. Only verified emails may log in.",
         "responses": {
           "200": {
             "description": "Success",
@@ -338,7 +338,7 @@
             }
           },
           "403": {
-            "description": "Account inactive.",
+            "description": "Account inactive or email not verified (statusCode 2005).",
             "content": {
               "application/json": {
                 "schema": {
@@ -3654,6 +3654,174 @@
           }
         }
       }
+    },
+    "/api/auth/verify-email": {
+      "get": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "EmailVerificationPage",
+        "operationId": "auth.EmailVerificationPage",
+        "x-implementation-status": "implemented",
+        "security": [],
+        "description": "Opens the confirmation page. The email token is carried in the URL fragment, never a query parameter. GET does not activate the account.",
+        "responses": {
+          "200": {
+            "description": "Email confirmation page",
+            "content": {
+              "text/html": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "VerifyEmail",
+        "operationId": "auth.VerifyEmail",
+        "x-implementation-status": "implemented",
+        "security": [],
+        "description": "Consumes an unexpired token once and marks the email verified. Does not issue JWTs or unblock inactive users.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/VerifyEmailRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "example": 1000
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input, expired or used token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Account is inactive or email is not verified",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Mail service unavailable or not configured",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/auth/resend-verification": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "ResendVerification",
+        "operationId": "auth.ResendVerification",
+        "x-implementation-status": "implemented",
+        "security": [],
+        "description": "Sends a replacement link at most once per account per 60 seconds. Returns the same accepted response for unknown, already verified or cooldown-limited accounts.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResendVerificationRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Success",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer",
+                      "example": 1000
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input, expired or used token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Account is inactive or email is not verified",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Mail service unavailable or not configured",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiError"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -3797,7 +3965,8 @@
           "userId",
           "email",
           "fullName",
-          "role"
+          "role",
+          "emailVerified"
         ],
         "properties": {
           "userId": {
@@ -3818,6 +3987,10 @@
               "RECEPTIONIST",
               "PATIENT"
             ]
+          },
+          "emailVerified": {
+            "type": "boolean",
+            "description": "False until the email verification link has been confirmed."
           }
         }
       },
@@ -3852,6 +4025,34 @@
           },
           "user": {
             "$ref": "#/components/schemas/UserResponse"
+          }
+        }
+      },
+      "VerifyEmailRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "token"
+        ],
+        "properties": {
+          "token": {
+            "type": "string",
+            "minLength": 43,
+            "maxLength": 43,
+            "description": "Single-use token from the #token= fragment of the email link. Expires after 15 minutes by default."
+          }
+        }
+      },
+      "ResendVerificationRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "email"
+        ],
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email"
           }
         }
       }

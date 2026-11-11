@@ -18,10 +18,11 @@ var phonePattern = regexp.MustCompile(`^0[0-9]{9}$`)
 type Service struct {
 	repository Repository
 	tokens     *Tokens
+	email      *EmailVerification
 }
 
-func NewService(repository Repository, tokens *Tokens) *Service {
-	return &Service{repository: repository, tokens: tokens}
+func NewService(repository Repository, tokens *Tokens, email *EmailVerification) *Service {
+	return &Service{repository: repository, tokens: tokens, email: email}
 }
 
 func (s *Service) Register(ctx context.Context, request RegisterRequest) (UserResponse, error) {
@@ -48,6 +49,9 @@ func (s *Service) register(ctx context.Context, request RegisterRequest, phone s
 	if s.repository == nil || s.tokens == nil {
 		return UserResponse{}, ErrUnavailable
 	}
+	if s.email == nil || s.email.sender == nil {
+		return UserResponse{}, ErrEmailNotConfigured
+	}
 	hash, err := bcrypt.GenerateFromPassword([]byte(request.Password), bcrypt.DefaultCost)
 	if err != nil {
 		return UserResponse{}, fmt.Errorf("hash password: %w", err)
@@ -64,8 +68,16 @@ func (s *Service) register(ctx context.Context, request RegisterRequest, phone s
 		}
 		value.PatientID = "BN-" + strings.ToUpper(strings.ReplaceAll(patientID, "-", ""))
 	}
+	verification, raw, err := s.email.prepare(id)
+	if err != nil {
+		return UserResponse{}, err
+	}
+	value.Verification = verification
 	account, err := s.repository.Create(ctx, value)
 	if err != nil {
+		return UserResponse{}, err
+	}
+	if err := s.email.send(ctx, account, raw); err != nil {
 		return UserResponse{}, err
 	}
 	return account.response(), nil
@@ -94,6 +106,9 @@ func (s *Service) Login(ctx context.Context, request LoginRequest) (LoginRespons
 	}
 	if !account.Active {
 		return LoginResponse{}, ErrInactive
+	}
+	if !account.EmailVerified {
+		return LoginResponse{}, ErrEmailUnverified
 	}
 	pair, err := s.tokens.issue(account)
 	if err != nil {
@@ -194,6 +209,9 @@ func (s *Service) activeAccount(ctx context.Context, id string) (Account, error)
 	}
 	if !account.Active {
 		return Account{}, ErrInactive
+	}
+	if !account.EmailVerified {
+		return Account{}, ErrEmailUnverified
 	}
 	return account, nil
 }

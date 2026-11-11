@@ -6,7 +6,7 @@ if ($health.status -ne 'ok' -or $health.mode -ne 'scaffold') { throw 'Not the AB
 $page = Invoke-WebRequest -UseBasicParsing "$base/swagger/index.html"
 if ($page.StatusCode -ne 200) { throw 'Swagger page unavailable' }
 $spec = Invoke-RestMethod "$base/api/v3/api-docs"
-if (-not $spec.info.title.StartsWith('ABClinic Go')) { throw 'Wrong API document' }
+if (-not $spec.info.title.StartsWith('ABClinic')) { throw 'Wrong API document' }
 $count = 0
 foreach ($path in $spec.paths.PSObject.Properties) {
  foreach ($operation in $path.Value.PSObject.Properties) {
@@ -22,7 +22,7 @@ foreach ($path in $spec.paths.PSObject.Properties) {
  }
 }
 if ($count -ne 103) { throw "Expected 103 scaffold routes, found $count" }
-foreach ($route in @('register','register-patient','login','refresh_token','logout')) {
+foreach ($route in @('register','register-patient','login','refresh_token','logout','verify-email','resend-verification')) {
  try {
   Invoke-WebRequest -UseBasicParsing -Uri "$base/api/auth/$route" -Method POST -TimeoutSec 5 | Out-Null
   throw "Expected 400 for empty auth request: $route"
@@ -30,4 +30,6 @@ foreach ($route in @('register','register-patient','login','refresh_token','logo
   if (-not $_.Exception.Response -or [int]$_.Exception.Response.StatusCode -ne 400) { throw }
  }
 }
-Write-Host 'Health + Swagger + 103 scaffold routes (501) + 5 auth validation routes (400) OK. No business data was written.'
+$verificationPage = Invoke-WebRequest -UseBasicParsing "$base/api/auth/verify-email"
+if ($verificationPage.StatusCode -ne 200) { throw 'Email verification page unavailable' }
+Write-Host 'Health + Swagger + 103 scaffold routes (501) + 7 auth validation routes (400) OK. No business data was written.'

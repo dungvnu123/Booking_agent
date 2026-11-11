@@ -20,6 +20,9 @@ func (h *Handler) RegisterRoutes(api *gin.RouterGroup) {
 	api.POST("/auth/login", h.Login)
 	api.POST("/auth/refresh_token", h.RefreshToken)
 	api.POST("/auth/logout", h.Logout)
+	api.GET("/auth/verify-email", h.EmailVerificationPage)
+	api.POST("/auth/verify-email", h.VerifyEmail)
+	api.POST("/auth/resend-verification", h.ResendVerification)
 }
 
 func (h *Handler) Register(c *gin.Context) {
@@ -32,7 +35,7 @@ func (h *Handler) Register(c *gin.Context) {
 		httpx.Fail(c, err)
 		return
 	}
-	respond(c, http.StatusCreated, "Registration successful!", user)
+	respond(c, http.StatusCreated, "Đã tạo tài khoản. Vui lòng kiểm tra email để xác thực.", user)
 }
 
 func (h *Handler) RegisterPatient(c *gin.Context) {
@@ -45,7 +48,7 @@ func (h *Handler) RegisterPatient(c *gin.Context) {
 		httpx.Fail(c, err)
 		return
 	}
-	respond(c, http.StatusCreated, "Patient registration successful!", user)
+	respond(c, http.StatusCreated, "Đã tạo tài khoản bệnh nhân. Vui lòng kiểm tra email để xác thực.", user)
 }
 
 func (h *Handler) Login(c *gin.Context) {
@@ -105,4 +108,28 @@ func bind(c *gin.Context, destination any) bool {
 func respond(c *gin.Context, status int, message string, data any) {
 	c.Header("Cache-Control", "no-store")
 	c.JSON(status, httpx.Response{StatusCode: 1000, Message: message, Data: data})
+}
+
+func (h *Handler) VerifyEmail(c *gin.Context) {
+	var request VerifyEmailRequest
+	if !bind(c, &request) {
+		return
+	}
+	if err := h.service.VerifyEmail(c.Request.Context(), request); err != nil {
+		httpx.Fail(c, err)
+		return
+	}
+	respond(c, http.StatusOK, "Email đã được xác thực. Bạn có thể đăng nhập.", nil)
+}
+
+func (h *Handler) ResendVerification(c *gin.Context) {
+	var request ResendVerificationRequest
+	if !bind(c, &request) {
+		return
+	}
+	if err := h.service.ResendVerification(c.Request.Context(), request); err != nil {
+		httpx.Fail(c, err)
+		return
+	}
+	respond(c, http.StatusAccepted, "Nếu tài khoản cần xác thực và đủ thời gian gửi lại, email xác thực sẽ được gửi.", nil)
 }

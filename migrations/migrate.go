@@ -12,6 +12,9 @@ import (
 //go:embed 000001_identity.up.sql
 var IdentitySQL string
 
+//go:embed 000002_email_verification.up.sql
+var EmailVerificationSQL string
+
 func Apply(ctx context.Context, pool *pgxpool.Pool) error {
 	return postgres.InTx(ctx, pool, func(tx pgx.Tx) error {
 		if _, err := tx.Exec(ctx, `SELECT pg_advisory_xact_lock(hashtextextended('abclinic:migrations',0))`); err != nil {
@@ -20,7 +23,7 @@ func Apply(ctx context.Context, pool *pgxpool.Pool) error {
 		if _, err := tx.Exec(ctx, `CREATE TABLE IF NOT EXISTS schema_migrations(version BIGINT PRIMARY KEY,applied_at TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP)`); err != nil {
 			return err
 		}
-		for index, query := range []string{IdentitySQL} {
+		for index, query := range []string{IdentitySQL, EmailVerificationSQL} {
 			version := index + 1
 			var applied bool
 			if err := tx.QueryRow(ctx, `SELECT EXISTS(SELECT 1 FROM schema_migrations WHERE version=$1)`, version).Scan(&applied); err != nil {

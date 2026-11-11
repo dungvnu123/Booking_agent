@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Xác thực email — ABClinic</title>
+<style nonce="{{.Nonce}}">
+body{font:16px/1.6 system-ui,sans-serif;background:#f5f8f7;color:#18392e;margin:0;padding:64px 24px}main{max-width:440px;margin:auto;background:white;padding:32px;border-radius:16px}h1{font-size:25px;margin-top:0}button{background:#006c49;color:white;border:0;border-radius:8px;padding:12px 24px;font:inherit;cursor:pointer}button:disabled{opacity:.6;cursor:default}p{overflow-wrap:anywhere}
+</style>
+</head>
+<body><main><strong>ABClinic</strong><h1>Xác thực email</h1><p id="message">Chọn xác nhận để hoàn tất xác thực email của bạn.</p><button id="confirm" type="button">Xác nhận email</button></main>
+<script nonce="{{.Nonce}}">
+const params = new URLSearchParams(location.hash.slice(1));
+const token = params.get('token');
+history.replaceState(null, '', location.pathname);
+
+const button = document.getElementById('confirm');
+const message = document.getElementById('message');
+
+if (!token) {
+  button.disabled = true;
+  message.textContent = 'Link không hợp lệ. Hãy yêu cầu gửi lại email xác thực trong ứng dụng.';
+}
+
+button.addEventListener('click', async () => {
+  button.disabled = true;
+  try {
+    const response = await fetch(location.pathname, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token })
+    });
+    const result = await response.json();
+    if (!response.ok) {
+      throw new Error(result.message || 'Không xác thực được email.');
+    }
+    message.textContent = 'Email đã được xác thực. Bạn có thể quay lại ứng dụng để đăng nhập.';
+    button.hidden = true;
+  } catch (error) {
+    message.textContent = error.message;
+    button.disabled = false;
+  }
+});
+</script></body></html>

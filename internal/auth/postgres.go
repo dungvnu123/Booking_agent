@@ -62,7 +62,7 @@ func (r *PostgresRepository) Create(ctx context.Context, value NewAccount) (Acco
 				return err
 			}
 		}
-		return nil
+		return insertEmailToken(ctx, tx, value.Verification)
 	})
 	if err != nil {
 		var pgErr *pgconn.PgError
@@ -115,7 +115,7 @@ func linkPatient(ctx context.Context, tx pgx.Tx, value NewAccount) error {
 }
 
 const accountQuery = `SELECT u.id,u.email,COALESCE(u.full_name,''),r.role_name,
- COALESCE(u.password_hash,''),COALESCE(u.is_active,FALSE)
+ COALESCE(u.password_hash,''),COALESCE(u.is_active,FALSE),u.email_verified
  FROM users u JOIN roles r ON r.role_id=u.role_id`
 
 func (r *PostgresRepository) FindByEmail(ctx context.Context, email string) (Account, error) {
@@ -134,7 +134,7 @@ func (r *PostgresRepository) FindByID(ctx context.Context, id string) (Account, 
 
 func scanAccount(row pgx.Row) (Account, error) {
 	var value Account
-	err := row.Scan(&value.ID, &value.Email, &value.FullName, &value.Role, &value.PasswordHash, &value.Active)
+	err := row.Scan(&value.ID, &value.Email, &value.FullName, &value.Role, &value.PasswordHash, &value.Active, &value.EmailVerified)
 	if errors.Is(err, pgx.ErrNoRows) {
 		return Account{}, ErrNotFound
 	}

@@ -20,6 +20,7 @@ import (
 	"abclinic.local/backend/internal/notification"
 	"abclinic.local/backend/internal/patient"
 	"abclinic.local/backend/internal/platform/clock"
+	"abclinic.local/backend/internal/platform/mailer"
 	"abclinic.local/backend/internal/platform/middleware"
 	"abclinic.local/backend/internal/platform/postgres"
 	"abclinic.local/backend/internal/platform/swagger"
@@ -61,7 +62,24 @@ func New(ctx context.Context, cfg config.Config) (*App, error) {
 	} else {
 		slog.Warn("JWT secrets are missing; run scripts/setup.ps1 to configure authentication")
 	}
-	a.Auth = auth.NewService(auth.NewPostgresRepository(a.DB), tokens)
+	repository := auth.NewPostgresRepository(a.DB)
+	var sender auth.EmailSender
+	if cfg.SMTPHost != "" {
+		smtpSender, err := mailer.NewSMTP(mailer.Config{Host: cfg.SMTPHost, Port: cfg.SMTPPort, Username: cfg.SMTPUsername, Password: cfg.SMTPPassword, From: cfg.SMTPFrom, Encryption: cfg.SMTPEncryption, Timeout: cfg.SMTPTimeout})
+		if err != nil {
+			a.Close()
+			return nil, err
+		}
+		sender = smtpSender
+	} else {
+		slog.Warn("SMTP is not configured; registration and verification email delivery are unavailable")
+	}
+	verification, err := auth.NewEmailVerification(repository, sender, a.Clock, auth.EmailConfig{VerificationURL: cfg.EmailVerificationURL, TokenTTL: cfg.EmailVerificationTTL, ResendCooldown: cfg.EmailResendCooldown})
+	if err != nil {
+		a.Close()
+		return nil, err
+	}
+	a.Auth = auth.NewService(repository, tokens, verification)
 	return a, nil
 }
 func (a *App) Close() {

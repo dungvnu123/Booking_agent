@@ -55,6 +55,12 @@ func TestScaffoldRoutesAndDocumentation(t *testing.T) {
 		}
 		rec := httptest.NewRecorder()
 		router.ServeHTTP(rec, httptest.NewRequest(route.Method, requestPath, nil))
+		if route.Path == "/api/auth/verify-email" && route.Method == "GET" {
+			if rec.Code != 200 || !strings.Contains(rec.Header().Get("Content-Type"), "text/html") {
+				t.Fatal("verification page not served")
+			}
+			continue
+		}
 		expectedStatus, expectedCode := 501, 1501
 		if strings.HasPrefix(route.Path, "/api/auth/") {
 			expectedStatus, expectedCode = 400, 400
@@ -69,7 +75,7 @@ func TestScaffoldRoutesAndDocumentation(t *testing.T) {
 			t.Fatalf("invalid scaffold response: %s", rec.Body.String())
 		}
 	}
-	if count != 108 {
+	if count != 111 {
 		t.Fatalf("business routes=%d; verify source inventory", count)
 	}
 	for _, path := range []string{"/api/patients/1/summary", "/api/patients/1/ai-sessions", "/api/v1/users"} {
