@@ -22,7 +22,7 @@ func RequestID() gin.HandlerFunc {
 	}
 }
 
-// CORS only permits exact configured origins; it never enables wildcard credentials.
+// CORS permits the API origin and explicitly configured frontend origins.
 func CORS(origins []string) gin.HandlerFunc {
 	allowed := make(map[string]bool, len(origins))
 	for _, origin := range origins {
@@ -35,7 +35,12 @@ func CORS(origins []string) gin.HandlerFunc {
 			return
 		}
 		c.Header("Vary", "Origin")
-		if !allowed[origin] {
+		scheme := "http"
+		if c.Request.TLS != nil {
+			scheme = "https"
+		}
+		sameOrigin := origin == scheme+"://"+c.Request.Host
+		if !sameOrigin && !allowed[origin] {
 			c.AbortWithStatus(http.StatusForbidden)
 			return
 		}

@@ -618,3 +618,36 @@ func TestExistingPasswordStillLogsIn(t *testing.T) {
 		t.Fatalf("password creation policy must not block an existing login: %v", err)
 	}
 }
+
+func TestSwaggerSameOriginAuth(t *testing.T) {
+	for _, tc := range []struct {
+		name, target, origin string
+		status               int
+	}{
+		{"swagger localhost", "http://localhost:8081/api/auth/register", "http://localhost:8081", 201},
+		{"swagger loopback", "http://127.0.0.1:8081/api/auth/register", "http://127.0.0.1:8081", 201},
+		{"swagger HTTPS", "https://api.example.com/api/auth/register", "https://api.example.com", 201},
+		{"configured frontend", "http://localhost:8081/api/auth/register", "http://localhost:5173", 201},
+		{"unconfigured website", "http://localhost:8081/api/auth/register", "https://other.example", 403},
+		{"different scheme", "http://localhost:8081/api/auth/register", "https://localhost:8081", 403},
+	} {
+		t.Run(tc.name, func(t *testing.T) {
+			gin.SetMode(gin.TestMode)
+			service, _, _ := newTestService(t)
+			router := gin.New()
+			router.Use(middleware.CORS([]string{"http://localhost:5173", "http://localhost:3000"}))
+			auth.NewHandler(service).RegisterRoutes(router.Group("/api"))
+			req := httptest.NewRequest(http.MethodPost, tc.target, strings.NewReader(`{"email":"swagger@example.com","password":"Password123!","fullName":"Swagger Test"}`))
+			req.Header.Set("Origin", tc.origin)
+			req.Header.Set("Content-Type", "application/json")
+			rec := httptest.NewRecorder()
+			router.ServeHTTP(rec, req)
+			if rec.Code != tc.status {
+				t.Fatalf("got %d, want %d: %s", rec.Code, tc.status, rec.Body)
+			}
+			if tc.status == 201 && rec.Header().Get("Access-Control-Allow-Origin") != tc.origin {
+				t.Fatal("missing allowed origin")
+			}
+		})
+	}
+}
