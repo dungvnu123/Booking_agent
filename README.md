@@ -1,8 +1,8 @@
-# ABClinic backend ? Go + Gin
+# Booking App backend ? Go + Gin
 
 Khung cho một backend Go chia module nghiệp vụ, PostgreSQL dùng chung, API và worker là hai entry point. Không gồm AI. Theo [bản thiết kế](docs/backend-go-blueprint.md) và [chỉ mục nguồn](docs/backend-go-inventory.md) bạn cung cấp.
 
-Repository Booking_agent phát triển nền tảng đặt lịch cho ABClinic. Giai đoạn hiện tại xây backend nghiệp vụ; giai đoạn sau bổ sung agent tư vấn lịch phù hợp và thực hiện đặt lịch theo xác nhận của người dùng. Xem [hướng phát triển](docs/roadmap.md).
+Repository Booking_agent phát triển nền tảng đặt lịch cho Booking App. Giai đoạn hiện tại xây backend nghiệp vụ; giai đoạn sau bổ sung agent tư vấn lịch phù hợp và thực hiện đặt lịch theo xác nhận của người dùng. Xem [hướng phát triển](docs/roadmap.md).
 
 **Auth đã được triển khai:** 8 route `/api/auth/*` có đăng ký, gửi mail/xác thực email, đăng nhập, refresh token và logout. 103 route nghiệp vụ còn lại vẫn trả HTTP 501. Swagger phân biệt rõ route đã làm và route scaffold.
 

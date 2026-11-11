@@ -60,8 +60,8 @@ func (v *EmailVerification) send(ctx context.Context, account Account, raw strin
 		return err
 	}
 	link.Fragment = "token=" + raw
-	body := fmt.Sprintf("Xin chào,\n\nBạn đã yêu cầu xác thực email cho tài khoản ABClinic.\nMở đường dẫn sau và chọn Xác nhận email:\n\n%s\n\nLink có hiệu lực %d phút và chỉ dùng được một lần.\nNếu bạn không đăng ký tài khoản, hãy bỏ qua email này.\n", link.String(), int(v.config.TokenTTL/time.Minute))
-	if err := v.sender.Send(ctx, account.Email, "Xác thực email tài khoản ABClinic", body); err != nil {
+	body := fmt.Sprintf("Xin chào,\n\nBạn đã yêu cầu xác thực email cho tài khoản Booking App.\nMở đường dẫn sau và chọn Xác nhận email:\n\n%s\n\nLink có hiệu lực %d phút và chỉ dùng được một lần.\nNếu bạn không đăng ký tài khoản, hãy bỏ qua email này.\n", link.String(), int(v.config.TokenTTL/time.Minute))
+	if err := v.sender.Send(ctx, account.Email, "Xác thực email tài khoản Booking App", body); err != nil {
 		slog.ErrorContext(ctx, "verification email delivery failed", "error", err)
 		return ErrEmailDelivery
 	}

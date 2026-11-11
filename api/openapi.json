@@ -1,7 +1,7 @@
 {
   "openapi": "3.0.3",
   "info": {
-    "title": "ABClinic Go — scaffold",
+    "title": "Booking App API",
     "version": "0.3.0",
     "description": "Authentication with PostgreSQL, BCrypt, access/refresh JWT, SMTP email verification, patient registration and token revocation is implemented. The other 103 business routes remain HTTP 501 scaffolds. AI routes are excluded."
   },

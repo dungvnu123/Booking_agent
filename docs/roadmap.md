@@ -1,6 +1,6 @@
 # Hướng phát triển Booking_agent
 
-Mục tiêu: xây backend đặt lịch cho ABClinic, sau đó bổ sung agent có thể tư vấn lịch phù hợp và hỗ trợ người dùng đặt lịch tại phòng khám.
+Mục tiêu: xây backend đặt lịch cho Booking App, sau đó bổ sung agent có thể tư vấn lịch phù hợp và hỗ trợ người dùng đặt lịch tại phòng khám.
 
 ## Giai đoạn hiện tại: nền tảng backend
 

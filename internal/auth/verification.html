@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Xác thực email — ABClinic</title>
+<title>Xác thực email — Booking App</title>
 <style nonce="{{.Nonce}}">
 body{font:16px/1.6 system-ui,sans-serif;background:#f5f8f7;color:#18392e;margin:0;padding:64px 24px}main{max-width:440px;margin:auto;background:white;padding:32px;border-radius:16px}h1{font-size:25px;margin-top:0}button{background:#006c49;color:white;border:0;border-radius:8px;padding:12px 24px;font:inherit;cursor:pointer}button:disabled{opacity:.6;cursor:default}p{overflow-wrap:anywhere}
 </style>
 </head>
-<body><main><strong>ABClinic</strong><h1>Xác thực email</h1><p id="message">Chọn xác nhận để hoàn tất xác thực email của bạn.</p><button id="confirm" type="button">Xác nhận email</button></main>
+<body><main><strong>Booking App</strong><h1>Xác thực email</h1><p id="message">Chọn xác nhận để hoàn tất xác thực email của bạn.</p><button id="confirm" type="button">Xác nhận email</button></main>
 <script nonce="{{.Nonce}}">
 const params = new URLSearchParams(location.hash.slice(1));
 const token = params.get('token');

@@ -1,6 +1,6 @@
 $ErrorActionPreference = 'Stop'
 . "$PSScriptRoot\environment.ps1"
-$binDir = Join-Path $projectRoot '.tools\abclinic'
+$binDir = Join-Path $projectRoot '.tools\booking-app'
 New-Item -ItemType Directory -Force -Path $binDir | Out-Null
 $binary = Join-Path $binDir 'api.exe'
 try {
@@ -17,7 +17,7 @@ try {
  $child = Start-Process -FilePath $binary -WorkingDirectory $projectRoot -WindowStyle Hidden -PassThru -RedirectStandardOutput (Join-Path $binDir 'smoke.out.log') -RedirectStandardError (Join-Path $binDir 'smoke.err.log')
  $ready = $false
  for ($attempt = 0; $attempt -lt 30; $attempt++) {
-  if ($child.HasExited) { throw 'API exited early; check .tools/abclinic/smoke.err.log' }
+  if ($child.HasExited) { throw 'API exited early; check .tools/booking-app/smoke.err.log' }
   try {
    $health = Invoke-RestMethod 'http://127.0.0.1:18081/healthz' -TimeoutSec 1
    if ($health.mode -eq 'scaffold') { $ready = $true; break }

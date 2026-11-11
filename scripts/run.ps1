@@ -4,5 +4,5 @@ $ErrorActionPreference = 'Stop'
 try {
  Push-Location $projectRoot
  & $goExe run "./cmd/$Target"
- if ($LASTEXITCODE -ne 0) { throw "ABClinic $Target stopped with an error" }
+ if ($LASTEXITCODE -ne 0) { throw "Booking App $Target stopped with an error" }
 } finally { Pop-Location }

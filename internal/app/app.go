@@ -129,7 +129,7 @@ func (a *App) RunAPI(ctx context.Context) error {
 		WriteTimeout: 30 * time.Second, IdleTimeout: 60 * time.Second, MaxHeaderBytes: 1 << 20}
 	errCh := make(chan error, 1)
 	go func() { errCh <- srv.ListenAndServe() }()
-	slog.Info("ABClinic API starting", "addr", a.Config.Addr, "swagger", "/swagger/index.html")
+	slog.Info("Booking App API starting", "addr", a.Config.Addr, "swagger", "/swagger/index.html")
 	select {
 	case err := <-errCh:
 		if errors.Is(err, http.ErrServerClosed) {

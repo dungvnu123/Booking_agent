@@ -991,7 +991,7 @@ func TestEmailSMTPConfiguration(t *testing.T) {
 	t.Setenv("SMTP_HOST", "smtp.gmail.com")
 	t.Setenv("SMTP_USERNAME", "sender@example.com")
 	t.Setenv("SMTP_PASSWORD", "test-app-password")
-	t.Setenv("SMTP_FROM", "ABClinic <sender@example.com>")
+	t.Setenv("SMTP_FROM", "Booking App <sender@example.com>")
 	if _, err := config.FromEnv(); err != nil {
 		t.Fatal(err)
 	}
@@ -1053,7 +1053,7 @@ func smtpTestServer(t *testing.T, encryption string, offerSTARTTLS bool) (mailer
 		result := serveSMTP(connection, serverCertificate, encryption, offerSTARTTLS)
 		delivery <- result
 	}()
-	return mailer.Config{Host: "127.0.0.1", Port: listener.Addr().(*net.TCPAddr).Port, Username: "sender@example.com", Password: "test-password", From: "ABClinic <sender@example.com>", Encryption: encryption, Timeout: 3 * time.Second, RootCAs: roots}, delivery
+	return mailer.Config{Host: "127.0.0.1", Port: listener.Addr().(*net.TCPAddr).Port, Username: "sender@example.com", Password: "test-password", From: "Booking App <sender@example.com>", Encryption: encryption, Timeout: 3 * time.Second, RootCAs: roots}, delivery
 }
 
 func serveSMTP(connection net.Conn, certificate tls.Certificate, encryption string, offerSTARTTLS bool) smtpDelivery {
@@ -1144,7 +1144,7 @@ func TestSMTPVerificationDeliveryUsesTLS(t *testing.T) {
 			if err != nil {
 				t.Fatal(err)
 			}
-			body := "Xác thực email ABClinic\nhttp://localhost:8081/api/auth/verify-email#token=local-test-only\n"
+			body := "Xác thực email Booking App\nhttp://localhost:8081/api/auth/verify-email#token=local-test-only\n"
 			if err := sender.Send(context.Background(), "recipient@example.com", "Xác thực email", body); err != nil {
 				t.Fatal(err)
 			}

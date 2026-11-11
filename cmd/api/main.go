@@ -12,7 +12,7 @@ import (
 
 func main() {
 	if err := run(); err != nil {
-		slog.Error("ABClinic api stopped", "error", err)
+		slog.Error("Booking App api stopped", "error", err)
 		os.Exit(1)
 	}
 }

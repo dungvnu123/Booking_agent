@@ -95,12 +95,12 @@ func TestHealthDocsAndReadinessWithoutDatabase(t *testing.T) {
 	}{
 		{"/healthz", 200, "ok"},
 		{"/readyz", 503, "database_not_configured"},
-		{"/swagger/index.html", 200, "ABClinic"},
+		{"/swagger/index.html", 200, "Booking App"},
 		{"/swagger/swagger-ui-bundle.js", 200, "SwaggerUIBundle"},
 		{"/swagger/swagger-ui.css", 200, "swagger-ui"},
 		{"/swagger/swagger-initializer.js", 200, "openapi.json"},
-		{"/swagger/openapi.json", 200, "ABClinic"},
-		{"/api/v3/api-docs", 200, "ABClinic"},
+		{"/swagger/openapi.json", 200, "Booking App"},
+		{"/api/v3/api-docs", 200, "Booking App"},
 	} {
 		rec := httptest.NewRecorder()
 		router.ServeHTTP(rec, httptest.NewRequest("GET", tc.path, nil))

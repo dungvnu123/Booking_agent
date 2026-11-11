@@ -2,11 +2,11 @@ param([string]$BaseUrl = 'http://localhost:8081')
 $ErrorActionPreference = 'Stop'
 $base = $BaseUrl.TrimEnd('/')
 $health = Invoke-RestMethod "$base/healthz"
-if ($health.status -ne 'ok' -or $health.mode -ne 'scaffold') { throw 'Not the ABClinic scaffold server; restart the old demo server first.' }
+if ($health.status -ne 'ok' -or $health.mode -ne 'scaffold') { throw 'Not the Booking App scaffold server; restart the old demo server first.' }
 $page = Invoke-WebRequest -UseBasicParsing "$base/swagger/index.html"
 if ($page.StatusCode -ne 200) { throw 'Swagger page unavailable' }
 $spec = Invoke-RestMethod "$base/api/v3/api-docs"
-if (-not $spec.info.title.StartsWith('ABClinic')) { throw 'Wrong API document' }
+if (-not $spec.info.title.StartsWith('Booking App')) { throw 'Wrong API document' }
 $count = 0
 foreach ($path in $spec.paths.PSObject.Properties) {
  foreach ($operation in $path.Value.PSObject.Properties) {

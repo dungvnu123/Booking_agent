@@ -1,4 +1,4 @@
-# Trạng thái khung ABClinic
+# Trạng thái khung Booking App
 
 Đã có: Go module chung, Gin router theo nghiệp vụ, API/worker, config .env, timezone, PostgreSQL pool/transaction helper, CORS/request ID, ranh giới auth/role fail-closed, Swagger nhúng, Docker/Compose và script Windows.
 
@@ -14,4 +14,4 @@ Khác biệt có chủ ý: chuẩn hóa tên path parameter monthlyRosterId thà
 
 Migrations chưa có SQL vì chưa có schema thật đã xác minh. Không tự áp DDL lên DB cũ. Các bảng có liên kết AI cũ chưa được migrate hoặc xóa.
 
-Bản demo user/catalog và các tài nguyên không thuộc ABClinic được bỏ theo yêu cầu; không tiếp tục đăng ký API /api/v1/users.
+Bản demo user/catalog và các tài nguyên không thuộc Booking App được bỏ theo yêu cầu; không tiếp tục đăng ký API /api/v1/users.
