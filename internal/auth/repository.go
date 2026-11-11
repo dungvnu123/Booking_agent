@@ -8,6 +8,7 @@ import (
 )
 
 var (
+	ErrWeakPassword    = &fault.Error{Status: 400, Code: 400, Message: "Mật khẩu phải từ 8 đến 32 ký tự, có chữ thường, chữ hoa, số và ký tự đặc biệt; tối đa 72 byte UTF-8."}
 	ErrInvalidInput    = &fault.Error{Status: 400, Code: 400, Message: "Invalid registration or login data"}
 	ErrInvalidLogin    = &fault.Error{Status: 401, Code: 2002, Message: "Email or password is incorrect"}
 	ErrInvalidToken    = &fault.Error{Status: 401, Code: 2000, Message: "Invalid or expired token"}

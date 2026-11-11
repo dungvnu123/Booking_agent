@@ -3708,7 +3708,8 @@
           "password": {
             "type": "string",
             "minLength": 8,
-            "description": "At least 8 characters; at most 72 UTF-8 bytes.",
+            "description": "8–32 characters, including a lowercase letter, uppercase letter, number and punctuation/symbol. At most 72 UTF-8 bytes; spaces do not count as special characters.",
+            "maxLength": 32,
             "format": "password",
             "writeOnly": true,
             "example": "Password123!"
@@ -3738,7 +3739,8 @@
           "password": {
             "type": "string",
             "minLength": 8,
-            "description": "At least 8 characters; at most 72 UTF-8 bytes.",
+            "description": "8–32 characters, including a lowercase letter, uppercase letter, number and punctuation/symbol. At most 72 UTF-8 bytes; spaces do not count as special characters.",
+            "maxLength": 32,
             "format": "password",
             "writeOnly": true,
             "example": "Password123!"

@@ -42,8 +42,8 @@ func (s *Service) register(ctx context.Context, request RegisterRequest, phone s
 	if !validEmail(email) || name == "" || utf8.RuneCountInString(name) > 200 {
 		return UserResponse{}, ErrInvalidInput
 	}
-	if utf8.RuneCountInString(request.Password) < 8 || len(request.Password) > 72 || !utf8.ValidString(request.Password) {
-		return UserResponse{}, ErrInvalidInput
+	if !validPassword(request.Password) {
+		return UserResponse{}, ErrWeakPassword
 	}
 	if s.repository == nil || s.tokens == nil {
 		return UserResponse{}, ErrUnavailable
@@ -75,7 +75,7 @@ const dummyPasswordHash = "$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZd
 
 func (s *Service) Login(ctx context.Context, request LoginRequest) (LoginResponse, error) {
 	email := normalizeEmail(request.Email)
-	if !validEmail(email) || request.Password == "" || len(request.Password) > 72 {
+	if !validEmail(email) || request.Password == "" || len(request.Password) > MaxPasswordBytes {
 		return LoginResponse{}, ErrInvalidLogin
 	}
 	if s.repository == nil || s.tokens == nil {

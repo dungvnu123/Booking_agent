@@ -533,3 +533,88 @@ func TestAuthPostgres(t *testing.T) {
 	}
 
 }
+
+func TestRegistrationPasswordPolicy(t *testing.T) {
+	cases := []struct {
+		name, password string
+		valid          bool
+	}{
+		{"minimum length", "Aa1!xxxx", true},
+		{"maximum length", "Aa1!" + strings.Repeat("x", 28), true},
+		{"Unicode letters", "Áa1!" + strings.Repeat("界", 4), true},
+		{"too short", "Aa1!xxx", false},
+		{"too long", "Aa1!" + strings.Repeat("x", 29), false},
+		{"missing uppercase", "password123!", false},
+		{"missing lowercase", "PASSWORD123!", false},
+		{"missing number", "Password!!!", false},
+		{"missing special character", "Password123", false},
+		{"space is not special", "Password123 ", false},
+		{"empty password", "", false},
+		{"invalid UTF-8", "Aa1!xxxx" + string([]byte{0xff}), false},
+		{"bcrypt byte limit", "Aa1!" + strings.Repeat("界", 28), false},
+	}
+	for _, tc := range cases {
+		for _, patient := range []bool{false, true} {
+			endpoint := "register"
+			if patient {
+				endpoint = "register-patient"
+			}
+			t.Run(endpoint+"/"+tc.name, func(t *testing.T) {
+				service, repo, _ := newTestService(t)
+				request := auth.RegisterRequest{Email: "policy@example.com", Password: tc.password, FullName: "Policy Test"}
+				var err error
+				if patient {
+					_, err = service.RegisterPatient(context.Background(), auth.RegisterPatientRequest{RegisterRequest: request, Phone: "0901234567"})
+				} else {
+					_, err = service.Register(context.Background(), request)
+				}
+				if tc.valid {
+					if err != nil {
+						t.Fatal(err)
+					}
+					if len(repo.accounts) != 1 {
+						t.Fatal("valid password did not create an account")
+					}
+				} else {
+					if !errors.Is(err, auth.ErrWeakPassword) {
+						t.Fatalf("expected password policy error, got %v", err)
+					}
+					if len(repo.accounts) != 0 {
+						t.Fatal("weak password created an account")
+					}
+				}
+			})
+		}
+	}
+}
+
+func TestHTTPWeakPasswordReturnsPolicyMessage(t *testing.T) {
+	router := authRouter(t)
+	result := request(router, "POST", "/api/auth/register", `{"email":"policy@example.com","password":"password123","fullName":"Person"}`, "")
+	var body struct {
+		StatusCode int    `json:"statusCode"`
+		Message    string `json:"message"`
+	}
+	if err := json.Unmarshal(result.Body.Bytes(), &body); err != nil {
+		t.Fatal(err)
+	}
+	if result.Code != http.StatusBadRequest || body.StatusCode != 400 || body.Message != auth.ErrWeakPassword.Message {
+		t.Fatalf("unexpected password policy response: %d %s", result.Code, result.Body)
+	}
+}
+
+func TestExistingPasswordStillLogsIn(t *testing.T) {
+	service, repo, _ := newTestService(t)
+	user := registerUser(t, service, "legacy@example.com")
+	legacyPassword := "legacy123"
+	hash, err := bcrypt.GenerateFromPassword([]byte(legacyPassword), bcrypt.DefaultCost)
+	if err != nil {
+		t.Fatal(err)
+	}
+	account := repo.accounts[user.UserID]
+	account.PasswordHash = string(hash)
+	repo.accounts[user.UserID] = account
+	if _, err := service.Login(context.Background(), auth.LoginRequest{Email: user.Email, Password: legacyPassword}); err != nil {
+		t.Fatalf("password creation policy must not block an existing login: %v", err)
+	}
+}
